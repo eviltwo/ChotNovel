@@ -15,6 +15,8 @@ namespace MiniNovel.Player
         [SerializeField]
         private TMProMessageController _messageController = null;
 
+        private bool _clicked;
+
         protected override void Reset()
         {
             base.Reset();
@@ -37,13 +39,24 @@ namespace MiniNovel.Player
             }
             else
             {
+                _clicked = false;
                 _messageController.ShowNextCharacter();
                 while (_messageController.GetVisibleCharCount() < _messageController.GetTotalCharCount())
                 {
                     await UniTask.WaitForSeconds(interval, cancellationToken: cancellationToken);
                     _messageController.ShowNextCharacter();
+                    if (_clicked)
+                    {
+                        _messageController.ShowAllCharacter();
+                        break;
+                    }
                 }
             }
+        }
+
+        public void OnClick()
+        {
+            _clicked = true;
         }
     }
 }

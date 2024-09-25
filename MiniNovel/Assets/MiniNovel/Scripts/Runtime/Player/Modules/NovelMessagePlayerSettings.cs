@@ -6,6 +6,6 @@ namespace MiniNovel.Player
     public class NovelMessagePlayerSettings : ScriptableObject
     {
         [SerializeField]
-        public float MessageInterval = 0.1f;
+        public float MessageInterval = 0.05f;
     }
 }

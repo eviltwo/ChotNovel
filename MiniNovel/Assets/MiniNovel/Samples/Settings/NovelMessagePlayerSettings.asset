@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6769ff4ffd996f4a97cc06a37a5e392, type: 3}
   m_Name: NovelMessagePlayerSettings
   m_EditorClassIdentifier: 
-  MessageInterval: 0.1
+  MessageInterval: 0.05
