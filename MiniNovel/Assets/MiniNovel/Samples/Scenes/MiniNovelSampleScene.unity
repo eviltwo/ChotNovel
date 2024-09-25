@@ -636,8 +636,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
-  _commandNames:
-  - p
+  _commandName: p
   _messageController: {fileID: 1858206974}
 --- !u!114 &674005395
 MonoBehaviour:
@@ -652,8 +651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
-  _commandNames:
-  - r
+  _commandName: r
   _messageController: {fileID: 1858206974}
 --- !u!114 &674005396
 MonoBehaviour:
@@ -668,8 +666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
-  _commandNames:
-  - wait
+  _commandName: wait
   _timeParamName: time
 --- !u!114 &674005397
 MonoBehaviour:

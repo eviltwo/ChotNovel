@@ -6,31 +6,21 @@ namespace MiniNovel.Player
     public class NovelBackgroundImageSettings : ScriptableObject
     {
         [SerializeField]
-        private NovelBackgroundImageInfo[] _backgroundImages = default;
+        private Sprite[] _sprites = default;
 
-        public bool TryGetSprite(string name, out Sprite sprite)
+        public bool TryGetSprite(string name, out Sprite result)
         {
-            foreach (var backgroundImage in _backgroundImages)
+            foreach (var sprite in _sprites)
             {
-                if (backgroundImage.Name == name)
+                if (sprite.name == name)
                 {
-                    sprite = backgroundImage.Texture;
+                    result = sprite;
                     return true;
                 }
             }
 
-            sprite = null;
+            result = null;
             return false;
         }
-    }
-
-    [System.Serializable]
-    public class NovelBackgroundImageInfo
-    {
-        [SerializeField]
-        public string Name = string.Empty;
-
-        [SerializeField]
-        public Sprite Texture = null;
     }
 }
