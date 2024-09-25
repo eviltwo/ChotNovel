@@ -13,6 +13,7 @@ Hello
 
 *Label2
 World[Command2 param1=123 param2=1.23]OK[Command3]
+Line Break Text
 Last Text";
 
         [Test]
@@ -46,7 +47,7 @@ Last Text";
             Assert.AreEqual("Hello", texts[0].Content);
             Assert.AreEqual("World", texts[1].Content);
             Assert.AreEqual("OK", texts[2].Content);
-            Assert.AreEqual("Last Text", texts[3].Content);
+            Assert.AreEqual("Line Break TextLast Text", texts[3].Content);
         }
 
         [Test]
