@@ -331,6 +331,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 674005396}
+          m_TargetAssemblyTypeName: MiniNovel.Player.NovelWait, MiniNovel.Player
+          m_MethodName: OnClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &374497550
 GameObject:
   m_ObjectHideFlags: 0
@@ -569,7 +581,9 @@ GameObject:
   m_Component:
   - component: {fileID: 674005392}
   - component: {fileID: 674005393}
+  - component: {fileID: 674005395}
   - component: {fileID: 674005394}
+  - component: {fileID: 674005396}
   m_Layer: 0
   m_Name: Modules
   m_TagString: Untagged
@@ -624,6 +638,38 @@ MonoBehaviour:
   _commandNames:
   - p
   _messageController: {fileID: 1858206974}
+--- !u!114 &674005395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674005391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b8211e0897b0714483f46fbca2a5fe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 1670162766}
+  _commandNames:
+  - r
+  _messageController: {fileID: 1858206974}
+--- !u!114 &674005396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674005391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc928f5b89ec30c42b9a09f9ed91c650, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 1670162766}
+  _commandNames:
+  - wait
+  _timeParamName: time
 --- !u!1 &1042624606
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,15 +5,13 @@ using UnityEngine;
 
 namespace MiniNovel.Player
 {
-    public class NovelPageBreaker : NovelModule
+    public class NovelLineBreaker : NovelModule
     {
         [SerializeField]
-        private string[] _commandNames = { "p" };
+        private string[] _commandNames = { "r" };
 
         [SerializeField]
         private TMProMessageController _messageController = null;
-
-        private bool _clicked;
 
         protected override void Reset()
         {
@@ -26,17 +24,10 @@ namespace MiniNovel.Player
             return textElement.ElementType == TextElementType.Command && Array.IndexOf(_commandNames, textElement.Content) >= 0;
         }
 
-        public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
+        public override UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
-            _clicked = false;
-            await UniTask.WaitUntil(() => _clicked, cancellationToken: cancellationToken);
-            _messageController.ClearMessage();
-            payload.SkipToStopper = false;
-        }
-
-        public void OnClick()
-        {
-            _clicked = true;
+            _messageController.PushMessage(Environment.NewLine);
+            return UniTask.CompletedTask;
         }
     }
 }

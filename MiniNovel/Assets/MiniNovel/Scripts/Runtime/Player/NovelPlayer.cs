@@ -73,20 +73,22 @@ namespace MiniNovel.Player
 
         private async UniTask PlayTexts(int textElementIndex, CancellationToken cancellationToken)
         {
+            var payload = new NovelModulePayload();
+            payload.Player = this;
             for (int i = textElementIndex; i < _textElements.Count; i++)
             {
                 var textElement = _textElements[i];
-                await PlayModules(textElement, cancellationToken);
+                await PlayModules(textElement, payload, cancellationToken);
             }
         }
 
-        private async UniTask PlayModules(TextElement textElement, CancellationToken cancellationToken)
+        private async UniTask PlayModules(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
             foreach (var module in _modules)
             {
                 if (module.IsExecutable(textElement))
                 {
-                    await module.Execute(textElement, this, cancellationToken);
+                    await module.Execute(textElement, payload, cancellationToken);
                 }
             }
         }

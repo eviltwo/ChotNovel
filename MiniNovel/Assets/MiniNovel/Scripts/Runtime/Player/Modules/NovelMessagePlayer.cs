@@ -15,7 +15,7 @@ namespace MiniNovel.Player
         [SerializeField]
         private TMProMessageController _messageController = null;
 
-        private bool _clicked;
+        private event System.Action _clickeEvent;
 
         protected override void Reset()
         {
@@ -28,35 +28,43 @@ namespace MiniNovel.Player
             return textElement.ElementType == TextElementType.Message;
         }
 
-        public override async UniTask Execute(TextElement textElement, NovelPlayer novelPlayer, CancellationToken cancellationToken)
+        public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
             var message = textElement.Content;
             _messageController.PushMessage(message);
             var interval = _settings.MessageInterval * MessageIntervalMultiplier;
-            if (interval == 0)
+            if (interval == 0 || payload.SkipToStopper)
             {
                 _messageController.ShowAllCharacter();
             }
             else
             {
-                _clicked = false;
-                _messageController.ShowNextCharacter();
-                while (_messageController.GetVisibleCharCount() < _messageController.GetTotalCharCount())
+                System.Action skipCallback = () => payload.SkipToStopper = true;
+                _clickeEvent += skipCallback;
+                try
                 {
-                    await UniTask.WaitForSeconds(interval, cancellationToken: cancellationToken);
                     _messageController.ShowNextCharacter();
-                    if (_clicked)
+                    while (_messageController.GetVisibleCharCount() < _messageController.GetTotalCharCount())
                     {
-                        _messageController.ShowAllCharacter();
-                        break;
+                        await UniTask.WaitForSeconds(interval, cancellationToken: cancellationToken);
+                        _messageController.ShowNextCharacter();
+                        if (payload.SkipToStopper)
+                        {
+                            _messageController.ShowAllCharacter();
+                            break;
+                        }
                     }
+                }
+                finally
+                {
+                    _clickeEvent -= skipCallback;
                 }
             }
         }
 
         public void OnClick()
         {
-            _clicked = true;
+            _clickeEvent?.Invoke();
         }
     }
 }

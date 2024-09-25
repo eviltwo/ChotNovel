@@ -26,6 +26,6 @@ namespace MiniNovel.Player
 
         public abstract bool IsExecutable(TextElement textElement);
 
-        public abstract UniTask Execute(TextElement textElement, NovelPlayer novelPlayer, CancellationToken cancellationToken);
+        public abstract UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken);
     }
 }
