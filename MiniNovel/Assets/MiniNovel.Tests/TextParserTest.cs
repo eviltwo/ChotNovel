@@ -12,7 +12,7 @@ Hello
 [Command1 param1=aaa param2=bbb]
 
 *Label2
-World[Command2 param1=ccc param2=ddd]OK[Command3]
+World[Command2 param1=123 param2=1.23]OK[Command3]
 ";
 
         [Test]
@@ -56,14 +56,14 @@ World[Command2 param1=ccc param2=ddd]OK[Command3]
             Assert.AreEqual("Command1", commands[0].Content);
             Assert.AreEqual("Command2", commands[1].Content);
             Assert.AreEqual("Command3", commands[2].Content);
-            Assert.IsTrue(commands[0].TryGetParameter("param1", out var param1));
+            Assert.IsTrue(commands[0].TryGetStringParameter("param1", out var param1));
             Assert.AreEqual("aaa", param1);
-            Assert.IsTrue(commands[0].TryGetParameter("param2", out var param2));
+            Assert.IsTrue(commands[0].TryGetStringParameter("param2", out var param2));
             Assert.AreEqual("bbb", param2);
-            Assert.IsTrue(commands[1].TryGetParameter("param1", out var param3));
-            Assert.AreEqual("ccc", param3);
-            Assert.IsTrue(commands[1].TryGetParameter("param2", out var param4));
-            Assert.AreEqual("ddd", param4);
+            Assert.IsTrue(commands[1].TryGetIntParameter("param1", out var param3));
+            Assert.AreEqual(123, param3);
+            Assert.IsTrue(commands[1].TryGetFloatParameter("param2", out var param4));
+            Assert.AreEqual(1.23f, param4);
         }
     }
 }

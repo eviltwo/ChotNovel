@@ -26,9 +26,29 @@ namespace MiniNovel
             _params[key] = value;
         }
 
-        public bool TryGetParameter(string key, out string value)
+        public bool TryGetStringParameter(string key, out string value)
         {
             return _params.TryGetValue(key, out value);
+        }
+
+        public bool TryGetIntParameter(string key, out int value)
+        {
+            if (_params.TryGetValue(key, out var stringValue))
+            {
+                return int.TryParse(stringValue, out value);
+            }
+            value = 0;
+            return false;
+        }
+
+        public bool TryGetFloatParameter(string key, out float value)
+        {
+            if (_params.TryGetValue(key, out var stringValue))
+            {
+                return float.TryParse(stringValue, out value);
+            }
+            value = 0;
+            return false;
         }
     }
 }
