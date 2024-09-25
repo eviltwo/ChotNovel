@@ -9,6 +9,7 @@ namespace MiniNovel
     {
         // KAG Style
         public static char LabelSymbol = '*';
+        public static char LabelParamSeparator = '|';
         public static char CommandStartSymbol = '[';
         public static char CommandEndSymbol = ']';
         public static char CommandParamSeparator = ' ';
@@ -33,7 +34,7 @@ namespace MiniNovel
                             _messageBuffer.Clear();
                         }
                         // TODO: Add label parameters
-                        results.Add(new TextElement(line.Substring(1), TextElementType.Label));
+                        results.Add(ParseLabel(line.Substring(1)));
                     }
                     else
                     {
@@ -78,6 +79,19 @@ namespace MiniNovel
                     }
                 }
             }
+        }
+
+        private static TextElement ParseLabel(string labelSource)
+        {
+            var splitResults = labelSource.Split(LabelParamSeparator);
+            if (splitResults.Length != 2)
+            {
+                return new TextElement(labelSource, TextElementType.Label);
+            }
+
+            var element = new TextElement(splitResults[0], TextElementType.Label);
+            element.AddParameter("name", splitResults[1]);
+            return element;
         }
 
         private static TextElement ParseCommand(string commandSource)
