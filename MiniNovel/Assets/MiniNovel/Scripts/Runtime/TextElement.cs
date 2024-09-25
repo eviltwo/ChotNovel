@@ -1,0 +1,34 @@
+using System.Collections.Generic;
+
+namespace MiniNovel
+{
+    public enum TextElementType
+    {
+        Message,
+        Label,
+        Command,
+    }
+
+    public class TextElement
+    {
+        public readonly string Content;
+        public readonly TextElementType ElementType;
+        private readonly Dictionary<string, string> _params = new Dictionary<string, string>();
+
+        public TextElement(string content, TextElementType elementType)
+        {
+            Content = content;
+            ElementType = elementType;
+        }
+
+        public void AddParameter(string key, string value)
+        {
+            _params[key] = value;
+        }
+
+        public bool TryGetParameter(string key, out string value)
+        {
+            return _params.TryGetValue(key, out value);
+        }
+    }
+}
