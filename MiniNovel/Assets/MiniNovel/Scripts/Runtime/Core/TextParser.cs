@@ -78,6 +78,10 @@ namespace MiniNovel
                         }
                     }
                 }
+                if (_messageBuffer.Length > 0)
+                {
+                    results.Add(new TextElement(_messageBuffer.ToString(), TextElementType.Message));
+                }
             }
         }
 

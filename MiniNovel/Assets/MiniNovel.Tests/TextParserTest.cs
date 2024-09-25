@@ -13,14 +13,14 @@ Hello
 
 *Label2
 World[Command2 param1=123 param2=1.23]OK[Command3]
-";
+Last Text";
 
         [Test]
         public void Parse()
         {
             var result = new List<TextElement>();
             TextParser.Parse(_source, result);
-            Assert.AreEqual(8, result.Count);
+            Assert.AreEqual(9, result.Count);
         }
 
         [Test]
@@ -42,10 +42,11 @@ World[Command2 param1=123 param2=1.23]OK[Command3]
             var result = new List<TextElement>();
             TextParser.Parse(_source, result);
             var texts = result.Where(v => v.ElementType == TextElementType.Message).ToList();
-            Assert.AreEqual(3, texts.Count);
+            Assert.AreEqual(4, texts.Count);
             Assert.AreEqual("Hello", texts[0].Content);
             Assert.AreEqual("World", texts[1].Content);
             Assert.AreEqual("OK", texts[2].Content);
+            Assert.AreEqual("Last Text", texts[3].Content);
         }
 
         [Test]
