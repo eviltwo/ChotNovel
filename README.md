@@ -8,6 +8,7 @@ Minimal novel engine for Unity.
 - (未実装)実行ファイルだけでtxtの再生確認ができます。スクリプト担当者はUnityエディタを開く必要はありません。
 - (未実装)メッセージ・キャラ・背景・BGM・SEのコマンドはデフォルトで用意されています。
 - (未実装)ゲーム開発者は、コンポーネントを作成することでコマンドを拡張できます。
+- (未実装)Unity.Localizationに対応しています。
 
 # Feature (English)
 - The script structure is based on KAG (KiriKiri).
@@ -15,6 +16,7 @@ Minimal novel engine for Unity.
 - (Unimplemented) You can verify the playback of the txt file with just the executable. The script developer does not need to open the Unity editor.
 - (Unimplemented) Commands for messages, characters, backgrounds, BGM, and SE are provided by default.
 - (Unimplemented) Game developers can extend commands by creating components.
+- (Unimplemented) Supports Unity.Localization.
 
 # Install with UPM
 ```
