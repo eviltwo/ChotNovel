@@ -8,7 +8,7 @@ namespace MiniNovel.Player
     public class NovelLineBreaker : NovelModule
     {
         [SerializeField]
-        private string[] _commandNames = { "r" };
+        private string _commandName = "r";
 
         [SerializeField]
         private TMProMessageController _messageController = null;
@@ -21,7 +21,7 @@ namespace MiniNovel.Player
 
         public override bool IsExecutable(TextElement textElement)
         {
-            return textElement.ElementType == TextElementType.Command && Array.IndexOf(_commandNames, textElement.Content) >= 0;
+            return textElement.ElementType == TextElementType.Command && textElement.Content == _commandName;
         }
 
         public override UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)

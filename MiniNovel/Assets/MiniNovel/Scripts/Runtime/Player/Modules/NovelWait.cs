@@ -8,7 +8,7 @@ namespace MiniNovel.Player
     public class NovelWait : NovelModule
     {
         [SerializeField]
-        private string[] _commandNames = { "wait" };
+        private string _commandName = "wait";
 
         [SerializeField]
         private string _timeParamName = "time";
@@ -17,7 +17,7 @@ namespace MiniNovel.Player
 
         public override bool IsExecutable(TextElement textElement)
         {
-            return textElement.ElementType == TextElementType.Command && Array.IndexOf(_commandNames, textElement.Content) >= 0;
+            return textElement.ElementType == TextElementType.Command && textElement.Content == _commandName;
         }
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)

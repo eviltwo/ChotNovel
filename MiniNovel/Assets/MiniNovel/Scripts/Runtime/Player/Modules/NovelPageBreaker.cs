@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -8,7 +7,7 @@ namespace MiniNovel.Player
     public class NovelPageBreaker : NovelModule
     {
         [SerializeField]
-        private string[] _commandNames = { "p" };
+        private string _commandName = "p";
 
         [SerializeField]
         private TMProMessageController _messageController = null;
@@ -23,7 +22,7 @@ namespace MiniNovel.Player
 
         public override bool IsExecutable(TextElement textElement)
         {
-            return textElement.ElementType == TextElementType.Command && Array.IndexOf(_commandNames, textElement.Content) >= 0;
+            return textElement.ElementType == TextElementType.Command && textElement.Content == _commandName;
         }
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
