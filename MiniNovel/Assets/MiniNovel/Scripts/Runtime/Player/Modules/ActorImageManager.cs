@@ -56,12 +56,32 @@ namespace MiniNovel.Player
             }
         }
 
+        public Vector2 GetActorOffset(string name)
+        {
+            if (TryGetActor(name, out var actor))
+            {
+                return actor.Offset;
+            }
+
+            return Vector2.zero;
+        }
+
         public void SetActorOffset(string name, Vector2 offset)
         {
             if (TryGetActor(name, out var actor))
             {
                 actor.SetOffset(offset);
             }
+        }
+
+        public Vector2 GetActorPosition(string name)
+        {
+            if (TryGetActor(name, out var actor))
+            {
+                return actor.Position;
+            }
+
+            return Vector2.zero;
         }
 
         public void SetActorPosition(string name, Vector2 position)
@@ -94,7 +114,9 @@ namespace MiniNovel.Player
             private readonly GameObject _gameObject;
             private readonly RectTransform _rectTransform;
             private Vector2 _offset;
+            public Vector2 Offset => _offset;
             private Vector2 _position;
+            public Vector2 Position => _position;
 
             public ActorController(string name, Image image)
             {
@@ -123,11 +145,13 @@ namespace MiniNovel.Player
             public void SetOffset(Vector2 offset)
             {
                 _offset = offset;
+                UpdateTransform();
             }
 
             public void SetPosition(Vector2 position)
             {
                 _position = position;
+                UpdateTransform();
             }
 
             private void UpdateTransform()

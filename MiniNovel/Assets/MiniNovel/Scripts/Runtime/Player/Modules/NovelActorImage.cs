@@ -15,6 +15,9 @@ namespace MiniNovel.Player
         private string _folderName = "actor";
 
         [SerializeField]
+        private NovelActorImageSettings _settings = null;
+
+        [SerializeField]
         private ActorImageManager _actorImageManager = null;
 
         private class CreatedAssetContainer
@@ -79,6 +82,53 @@ namespace MiniNovel.Player
                         _createdAssets[actorName] = createdAsset;
                         _actorImageManager.SetActorSprite(actorName, createdAsset.Sprite);
                     }
+                }
+
+                if (textElement.TryGetFloatParameter("x", out var x))
+                {
+                    var position = _actorImageManager.GetActorPosition(actorName);
+                    position.x = x;
+                    _actorImageManager.SetActorPosition(actorName, position);
+                }
+
+                if (textElement.TryGetFloatParameter("y", out var y))
+                {
+                    var position = _actorImageManager.GetActorPosition(actorName);
+                    position.y = y;
+                    _actorImageManager.SetActorPosition(actorName, position);
+                }
+
+                if (textElement.TryGetFloatParameter("xoffset", out var xOffset))
+                {
+                    var position = _actorImageManager.GetActorOffset(actorName);
+                    position.x += xOffset;
+                    _actorImageManager.SetActorOffset(actorName, position);
+                }
+
+                if (textElement.TryGetFloatParameter("yoffset", out var yOffset))
+                {
+                    var position = _actorImageManager.GetActorOffset(actorName);
+                    position.y += yOffset;
+                    _actorImageManager.SetActorOffset(actorName, position);
+                }
+
+                if (textElement.TryGetStringParameter("layout", out var layoutName))
+                {
+                    if (_settings.TryGetLayoutPosition(layoutName, out var position))
+                    {
+                        _actorImageManager.SetActorPosition(actorName, position);
+                    }
+                    else
+                    {
+                        Debug.LogError($"Layout {layoutName} is not found.");
+                    }
+                }
+
+                if (textElement.TryGetStringParameter("clear", out _))
+                {
+                    _actorImageManager.RemoveActor(actorName);
+                    ReleaseCreatedAsset(actorName);
+                    _createdAssets.Remove(actorName);
                 }
             }
         }
