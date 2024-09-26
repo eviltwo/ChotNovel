@@ -84,8 +84,7 @@ namespace MiniNovel.Player
             var hasExtension = Path.HasExtension(fileName);
             var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
             var file = Directory.GetFiles(folderPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
-            var request = UnityWebRequestTexture.GetTexture(file);
-            await request.SendWebRequest();
+            var request = await UnityWebRequestTexture.GetTexture(file).SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError($"{request.result} {request.error}");
