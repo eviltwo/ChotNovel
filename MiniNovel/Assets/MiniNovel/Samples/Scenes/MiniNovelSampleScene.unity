@@ -816,7 +816,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
-  _commandName: back
+  _commandName: background
   _folderName: bgimage
   _image: {fileID: 2030264095}
 --- !u!114 &674005398

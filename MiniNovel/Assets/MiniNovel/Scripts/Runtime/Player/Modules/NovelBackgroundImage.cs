@@ -12,7 +12,7 @@ namespace MiniNovel.Player
     public class NovelBackgroundImage : NovelModule
     {
         [SerializeField]
-        private string _commandName = "back";
+        private string _commandName = "background";
 
         [SerializeField]
         private string _folderName = "bgimage";
@@ -53,7 +53,7 @@ namespace MiniNovel.Player
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
-            if (textElement.TryGetStringParameter("name", out var name))
+            if (textElement.TryGetStringParameter("texture", out var name))
             {
                 ReleaseCreatedImages();
                 _createdTexture = await FindTexture(name);

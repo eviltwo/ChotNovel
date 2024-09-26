@@ -1,12 +1,12 @@
 *start
-[back name=bg_forest]
+[background texture=bg_forest]
 [talker name=Console]
 Hello,[r]World![p]
 This is test message.[p]
 *next
 [talker name=John]
 Let's go![p]
-[back name=bg_beach]
+[background texture=bg_beach]
 [talker clear]
 End
 [s]
