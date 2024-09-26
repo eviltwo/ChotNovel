@@ -1,7 +1,9 @@
 *start
 [background texture=bg_forest]
-[talker name=Console]
+[actor name=robo texture=robo]
+[talker name=Robo]
 Hello,[r]World![p]
+[actor name=robo texture=robo_happy]
 This is test message.[p]
 *next
 [talker name=John]

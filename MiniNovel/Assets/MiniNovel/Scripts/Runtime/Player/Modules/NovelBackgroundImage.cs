@@ -1,10 +1,7 @@
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace MiniNovel.Player
@@ -15,7 +12,7 @@ namespace MiniNovel.Player
         private string _commandName = "background";
 
         [SerializeField]
-        private string _folderName = "bgimage";
+        private string _folderName = "background";
 
         [SerializeField]
         private Image _image = null;
@@ -53,10 +50,10 @@ namespace MiniNovel.Player
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
-            if (textElement.TryGetStringParameter("texture", out var name))
+            if (textElement.TryGetStringParameter("texture", out var textureName))
             {
                 ReleaseCreatedImages();
-                _createdTexture = await FindTexture(name);
+                _createdTexture = await FindTexture(textureName);
                 _image.enabled = _createdTexture != null;
                 if (_createdTexture != null)
                 {
@@ -69,32 +66,13 @@ namespace MiniNovel.Player
 
         private async UniTask<Texture2D> FindTexture(string fileName)
         {
-            var texture = await FindTexture(Path.Combine(Application.persistentDataPath, _folderName), fileName);
+            var texture = await NovelModuleUtility.FindTexture(Path.Combine(Application.persistentDataPath, _folderName), fileName);
             if (texture != null)
             {
                 return texture;
             }
 
-            return await FindTexture(Path.Combine(Application.streamingAssetsPath, _folderName), fileName);
-        }
-
-        private static async UniTask<Texture2D> FindTexture(string folderPath, string fileName)
-        {
-            if (!Directory.Exists(folderPath))
-            {
-                return null;
-            }
-            var hasExtension = Path.HasExtension(fileName);
-            var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
-            var file = Directory.GetFiles(folderPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
-            var request = await UnityWebRequestTexture.GetTexture(file).SendWebRequest();
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError($"{request.result} {request.error}");
-                return null;
-            }
-
-            return DownloadHandlerTexture.GetContent(request);
+            return await NovelModuleUtility.FindTexture(Path.Combine(Application.streamingAssetsPath, _folderName), fileName);
         }
     }
 }

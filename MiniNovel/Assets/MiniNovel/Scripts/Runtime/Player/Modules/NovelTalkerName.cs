@@ -13,8 +13,6 @@ namespace MiniNovel.Player
         [SerializeField]
         private TMP_Text _nameText = null;
 
-        private event System.Action _clickeEvent;
-
         private void Awake()
         {
             _nameText.text = string.Empty;
@@ -25,7 +23,7 @@ namespace MiniNovel.Player
             return textElement.ElementType == TextElementType.Command && textElement.Content == _commandName;
         }
 
-        public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
+        public override UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
             if (textElement.TryGetStringParameter("clear", out _))
             {
@@ -36,6 +34,8 @@ namespace MiniNovel.Player
             {
                 _nameText.text = talkerName;
             }
+
+            return UniTask.CompletedTask;
         }
     }
 }
