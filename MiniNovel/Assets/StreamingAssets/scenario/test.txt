@@ -1,8 +1,8 @@
-*Start
+*start
 [back name=bg_forest]
 Hello, World![r]
 This is test message.[p]
-*Next
+*next
 Let's go![p]
 [back name=bg_beach]
 End

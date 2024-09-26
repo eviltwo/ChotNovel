@@ -682,7 +682,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
   _commandName: back
-  _settings: {fileID: 11400000, guid: 9dd3fb72a7a86054095eca7c4ad389aa, type: 2}
+  _folderName: bgimage
   _image: {fileID: 2030264095}
 --- !u!1 &1042624606
 GameObject:
@@ -826,8 +826,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
-  _fileName: test.txt
-  _label: Start
+  _fileName: test
+  _label: start
 --- !u!1 &1858206970
 GameObject:
   m_ObjectHideFlags: 0
