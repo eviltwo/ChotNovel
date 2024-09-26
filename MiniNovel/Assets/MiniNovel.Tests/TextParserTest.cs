@@ -9,11 +9,11 @@ namespace MiniNovel.Tests
         private string _source = @"
 *Label1|Label1Name
 Hello
-[Command1 param1=aaa param2=bbb]
+[Command1 param1=aaa param2=123 param3=1.23 param4]
+@Command2 param1=aaa param2=123 param3=1.23 param4
 
 *Label2
-World[Command2 param1=123 param2=1.23]OK[Command3]
-@Command4 param1=aaa param2=123
+World[Command3]OK[Command4]
 Line Break Text
 Last Text";
 
@@ -59,21 +59,23 @@ Last Text";
             var commands = result.Where(v => v.ElementType == TextElementType.Command).ToList();
             Assert.AreEqual(4, commands.Count);
             Assert.AreEqual("Command1", commands[0].Content);
-            Assert.AreEqual("Command2", commands[1].Content);
-            Assert.AreEqual("Command3", commands[2].Content);
-            Assert.AreEqual("Command4", commands[3].Content);
             Assert.AreEqual(true, commands[0].TryGetStringParameter("param1", out var param1));
             Assert.AreEqual("aaa", param1);
-            Assert.AreEqual(true, commands[0].TryGetStringParameter("param2", out var param2));
-            Assert.AreEqual("bbb", param2);
-            Assert.AreEqual(true, commands[1].TryGetIntParameter("param1", out var param3));
-            Assert.AreEqual(123, param3);
-            Assert.AreEqual(true, commands[1].TryGetFloatParameter("param2", out var param4));
-            Assert.AreEqual(1.23f, param4);
-            Assert.AreEqual(true, commands[3].TryGetStringParameter("param1", out var param5));
-            Assert.AreEqual("aaa", param5);
-            Assert.AreEqual(true, commands[3].TryGetIntParameter("param2", out var param6));
-            Assert.AreEqual(123, param6);
+            Assert.AreEqual(true, commands[0].TryGetIntParameter("param2", out var param2));
+            Assert.AreEqual(123, param2);
+            Assert.AreEqual(true, commands[0].TryGetFloatParameter("param3", out var param3));
+            Assert.AreEqual(1.23f, param3);
+            Assert.AreEqual(true, commands[0].TryGetStringParameter("param4", out var _));
+            Assert.AreEqual("Command2", commands[1].Content);
+            Assert.AreEqual(true, commands[1].TryGetStringParameter("param1", out param1));
+            Assert.AreEqual("aaa", param1);
+            Assert.AreEqual(true, commands[1].TryGetIntParameter("param2", out param2));
+            Assert.AreEqual(123, param2);
+            Assert.AreEqual(true, commands[1].TryGetFloatParameter("param3", out param3));
+            Assert.AreEqual(1.23f, param3);
+            Assert.AreEqual(true, commands[1].TryGetStringParameter("param4", out var _));
+            Assert.AreEqual("Command3", commands[2].Content);
+            Assert.AreEqual("Command4", commands[3].Content);
         }
     }
 }

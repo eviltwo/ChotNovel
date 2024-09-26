@@ -130,7 +130,11 @@ namespace MiniNovel
                     continue;
                 }
                 var keyValue = splitResults[i].Split(CommandKeyValueSeparator);
-                if (keyValue.Length == 2)
+                if (keyValue.Length == 1)
+                {
+                    element.AddParameter(keyValue[0], string.Empty);
+                }
+                else if (keyValue.Length == 2)
                 {
                     element.AddParameter(keyValue[0], keyValue[1]);
                 }
