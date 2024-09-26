@@ -30,7 +30,10 @@ namespace MiniNovel.Player
 
         private void ReleaseCreatedImages()
         {
-            _image.sprite = null;
+            if (_image != null)
+            {
+                _image.sprite = null;
+            }
             if (_createdTexture != null)
             {
                 Destroy(_createdTexture);
