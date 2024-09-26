@@ -10,6 +10,7 @@ namespace MiniNovel
         // KAG Style
         public static char LabelSymbol = '*';
         public static char LabelParamSeparator = '|';
+        public static char CommandSymbol = '@';
         public static char CommandStartSymbol = '[';
         public static char CommandEndSymbol = ']';
         public static char CommandParamSeparator = ' ';
@@ -26,6 +27,11 @@ namespace MiniNovel
                 _messageBuffer.Clear();
                 while ((line = reader.ReadLine()) != null)
                 {
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        continue;
+                    }
+
                     if (line.StartsWith(LabelSymbol))
                     {
                         if (_messageBuffer.Length > 0)
@@ -35,6 +41,15 @@ namespace MiniNovel
                         }
                         // TODO: Add label parameters
                         results.Add(ParseLabel(line.Substring(1)));
+                    }
+                    else if (line.StartsWith(CommandSymbol))
+                    {
+                        if (_messageBuffer.Length > 0)
+                        {
+                            results.Add(new TextElement(_messageBuffer.ToString(), TextElementType.Message));
+                            _messageBuffer.Clear();
+                        }
+                        results.Add(ParseCommand(line.Substring(1)));
                     }
                     else
                     {

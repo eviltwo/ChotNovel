@@ -13,6 +13,7 @@ Hello
 
 *Label2
 World[Command2 param1=123 param2=1.23]OK[Command3]
+@Command4 param1=aaa param2=123
 Line Break Text
 Last Text";
 
@@ -21,7 +22,7 @@ Last Text";
         {
             var result = new List<TextElement>();
             TextParser.Parse(_source, result);
-            Assert.AreEqual(9, result.Count);
+            Assert.AreEqual(10, result.Count);
         }
 
         [Test]
@@ -56,10 +57,11 @@ Last Text";
             var result = new List<TextElement>();
             TextParser.Parse(_source, result);
             var commands = result.Where(v => v.ElementType == TextElementType.Command).ToList();
-            Assert.AreEqual(3, commands.Count);
+            Assert.AreEqual(4, commands.Count);
             Assert.AreEqual("Command1", commands[0].Content);
             Assert.AreEqual("Command2", commands[1].Content);
             Assert.AreEqual("Command3", commands[2].Content);
+            Assert.AreEqual("Command4", commands[3].Content);
             Assert.AreEqual(true, commands[0].TryGetStringParameter("param1", out var param1));
             Assert.AreEqual("aaa", param1);
             Assert.AreEqual(true, commands[0].TryGetStringParameter("param2", out var param2));
@@ -68,6 +70,10 @@ Last Text";
             Assert.AreEqual(123, param3);
             Assert.AreEqual(true, commands[1].TryGetFloatParameter("param2", out var param4));
             Assert.AreEqual(1.23f, param4);
+            Assert.AreEqual(true, commands[3].TryGetStringParameter("param1", out var param5));
+            Assert.AreEqual("aaa", param5);
+            Assert.AreEqual(true, commands[3].TryGetIntParameter("param2", out var param6));
+            Assert.AreEqual(123, param6);
         }
     }
 }
