@@ -1,9 +1,12 @@
 *start
 [back name=bg_forest]
-Hello, World![r]
+[talker name=Console]
+Hello,[r]World![p]
 This is test message.[p]
 *next
+[talker name=John]
 Let's go![p]
 [back name=bg_beach]
+[talker clear]
 End
 [s]
