@@ -30,6 +30,19 @@ namespace MiniNovel.Player
 
         public void Play(string fileName, string label)
         {
+            if (_playerCancellation != null)
+            {
+                _playerCancellation.Cancel();
+                _playerCancellation.Dispose();
+                _playerCancellation = null;
+            }
+
+            _playerCancellation = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
+            PlayInternal(fileName, label, _playerCancellation.Token).Forget();
+        }
+
+        private async UniTask PlayInternal(string fileName, string label, CancellationToken cancellationToken)
+        {
             if (string.IsNullOrEmpty(fileName))
             {
                 Debug.LogError("File name is empty.");
@@ -46,7 +59,8 @@ namespace MiniNovel.Player
             {
                 _currentFileName = fileName;
                 _textElements = new List<TextElement>();
-                if (!_textContainer.TryGetTextElements(fileName, _textElements))
+                var success = await _textContainer.LoadTextElements(fileName, _textElements, cancellationToken);
+                if (!success)
                 {
                     Debug.LogError($"Failed to get text elements from {fileName}.");
                     return;
@@ -60,15 +74,7 @@ namespace MiniNovel.Player
                 return;
             }
 
-            if (_playerCancellation != null)
-            {
-                _playerCancellation.Cancel();
-                _playerCancellation.Dispose();
-                _playerCancellation = null;
-            }
-
-            _playerCancellation = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
-            PlayTexts(labelIndex + 1, _playerCancellation.Token).Forget();
+            await PlayTexts(labelIndex + 1, cancellationToken);
         }
 
         private async UniTask PlayTexts(int textElementIndex, CancellationToken cancellationToken)
