@@ -20,6 +20,29 @@ namespace MiniNovel.Player
         [SerializeField]
         private Image _image = null;
 
+        private Texture2D _createdTexture;
+        private Sprite _createdSprite;
+
+        private void OnDestroy()
+        {
+            ReleaseCreatedImages();
+        }
+
+        private void ReleaseCreatedImages()
+        {
+            _image.sprite = null;
+            if (_createdTexture != null)
+            {
+                Destroy(_createdTexture);
+                _createdTexture = null;
+            }
+            if (_createdSprite != null)
+            {
+                Destroy(_createdSprite);
+                _createdSprite = null;
+            }
+        }
+
         public override bool IsExecutable(TextElement textElement)
         {
             return textElement.ElementType == TextElementType.Command && textElement.Content == _commandName;
@@ -29,22 +52,38 @@ namespace MiniNovel.Player
         {
             if (textElement.TryGetStringParameter("name", out var name))
             {
-                var texture = await FindTexture(name);
-                _image.enabled = texture != null;
-                if (texture != null)
+                ReleaseCreatedImages();
+                _createdTexture = await FindTexture(name);
+                _image.enabled = _createdTexture != null;
+                if (_createdTexture != null)
                 {
                     _image.enabled = true;
-                    _image.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                    _createdSprite = Sprite.Create(_createdTexture, new Rect(0, 0, _createdTexture.width, _createdTexture.height), Vector2.zero);
+                    _image.sprite = _createdSprite;
                 }
             }
         }
 
         private async UniTask<Texture2D> FindTexture(string fileName)
         {
+            var texture = await FindTexture(Path.Combine(Application.persistentDataPath, _folderName), fileName);
+            if (texture != null)
+            {
+                return texture;
+            }
+
+            return await FindTexture(Path.Combine(Application.streamingAssetsPath, _folderName), fileName);
+        }
+
+        private static async UniTask<Texture2D> FindTexture(string folderPath, string fileName)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                return null;
+            }
             var hasExtension = Path.HasExtension(fileName);
-            var streamingAssetsFilePath = Path.Combine(Application.streamingAssetsPath, _folderName);
             var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
-            var file = Directory.GetFiles(streamingAssetsFilePath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
+            var file = Directory.GetFiles(folderPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
             var request = UnityWebRequestTexture.GetTexture(file);
             await request.SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
