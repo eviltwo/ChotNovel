@@ -1,4 +1,5 @@
 *Start
+[clear]
 [background texture=bg_forest]
 [actor name=Robo texture=robo layout=center]
 [talker name=Robo]

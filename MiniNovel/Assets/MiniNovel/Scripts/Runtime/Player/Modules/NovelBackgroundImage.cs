@@ -30,6 +30,7 @@ namespace MiniNovel.Player
             if (_image != null)
             {
                 _image.sprite = null;
+                _image.enabled = false;
             }
             if (_createdTexture != null)
             {
@@ -41,6 +42,12 @@ namespace MiniNovel.Player
                 Destroy(_createdSprite);
                 _createdSprite = null;
             }
+        }
+
+        public override void ClearDisplayedObjects()
+        {
+            base.ClearDisplayedObjects();
+            ReleaseCreatedImages();
         }
 
         public override bool IsExecutable(TextElement textElement)

@@ -24,6 +24,13 @@ namespace MiniNovel.Player
             _player.UnregisterModule(this);
         }
 
+        /// <summary>
+        /// Clear all displayed objects.
+        /// </summary>
+        public virtual void ClearDisplayedObjects()
+        {
+        }
+
         public abstract bool IsExecutable(TextElement textElement);
 
         public abstract UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken);

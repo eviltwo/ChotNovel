@@ -23,6 +23,12 @@ namespace MiniNovel.Player
             _messageController = FindAnyObjectByType<TMProMessageController>();
         }
 
+        public override void ClearDisplayedObjects()
+        {
+            base.ClearDisplayedObjects();
+            _messageController.ClearMessage();
+        }
+
         public override bool IsExecutable(TextElement textElement)
         {
             return textElement.ElementType == TextElementType.Message;

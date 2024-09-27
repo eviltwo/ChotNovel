@@ -113,6 +113,14 @@ namespace MiniNovel.Player
             _modules.Remove(module);
         }
 
+        public void ClearDisplayedObjects()
+        {
+            foreach (var module in _modules)
+            {
+                module.ClearDisplayedObjects();
+            }
+        }
+
         private static bool PickLabeledTextElements(List<TextElement> source, string label, List<TextElement> results)
         {
             results.Clear();

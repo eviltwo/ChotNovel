@@ -18,6 +18,12 @@ namespace MiniNovel.Player
             _buttonManager = FindObjectOfType<ChoiceButtonManager>();
         }
 
+        public override void ClearDisplayedObjects()
+        {
+            base.ClearDisplayedObjects();
+            _buttonManager.Clear();
+        }
+
         public override bool IsExecutable(TextElement textElement)
         {
             return textElement.ElementType == TextElementType.Command && textElement.Content == _commandName;

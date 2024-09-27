@@ -30,10 +30,10 @@ namespace MiniNovel.Player
 
         private void OnDestroy()
         {
-            ReleaseCreatedAssetAll();
+            ReleaseAndClearCreatedAssetAll();
         }
 
-        private void ReleaseCreatedAssetAll()
+        private void ReleaseAndClearCreatedAssetAll()
         {
             foreach (var createdAsset in _createdAssets.Keys)
             {
@@ -55,6 +55,12 @@ namespace MiniNovel.Player
                     Destroy(createdAsset.Texture);
                 }
             }
+        }
+
+        public override void ClearDisplayedObjects()
+        {
+            base.ClearDisplayedObjects();
+            ReleaseAndClearCreatedAssetAll();
         }
 
         public override bool IsExecutable(TextElement textElement)

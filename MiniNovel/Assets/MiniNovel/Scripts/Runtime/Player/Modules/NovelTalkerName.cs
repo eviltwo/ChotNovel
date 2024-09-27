@@ -18,6 +18,12 @@ namespace MiniNovel.Player
             _nameText.text = string.Empty;
         }
 
+        public override void ClearDisplayedObjects()
+        {
+            base.ClearDisplayedObjects();
+            _nameText.text = string.Empty;
+        }
+
         public override bool IsExecutable(TextElement textElement)
         {
             return textElement.ElementType == TextElementType.Command && textElement.Content == _commandName;
