@@ -5,7 +5,7 @@ Minimal novel engine for Unity.
 # Feature (Japanese)
 - スクリプトの構造はKAG(吉里吉里)を参考にしています。
 - スクリプトはtxt形式で、streamingAssetsに格納します。
-- 実行ファイルだけでtxtの再生確認ができます。スクリプト担当者はUnityエディタを開く必要はありません。
+- persistentDataPathに格納されたスクリプトが優先されるので、スクリプト作成者はUnityエディタを開かずに実行ファイルだけで再生確認ができます。
 - メッセージ・キャラ・背景のコマンドはデフォルトで用意されています。(未実装)BGM・SE
 - ゲーム開発者は、コンポーネントを作成することでコマンドを拡張できます。
 - (未実装)Unity.Localizationに対応しています。
@@ -13,7 +13,7 @@ Minimal novel engine for Unity.
 # Feature (English)
 - The script structure is based on KAG (KiriKiri).
 - The script will be in txt format and stored in streamingAssets.
-- You can verify the playback of the txt file with just the executable. The script developer does not need to open the Unity editor.
+- Since the script stored in persistentDataPath is prioritized, the script writer can verify playback using only the executable file without Unity Editor.
 - Commands for messages, characters, backgrounds are provided by default. (Unimplemented) Music, Sound
 - Game developers can extend commands by creating components.
 - (Unimplemented) Supports Unity.Localization.
