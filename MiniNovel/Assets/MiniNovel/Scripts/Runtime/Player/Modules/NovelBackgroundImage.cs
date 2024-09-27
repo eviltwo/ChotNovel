@@ -52,13 +52,13 @@ namespace MiniNovel.Player
         {
             if (textElement.TryGetStringParameter("texture", out var textureName))
             {
-                ReleaseCreatedImages();
-                _createdTexture = await FindTexture(textureName);
-                _image.enabled = _createdTexture != null;
-                if (_createdTexture != null)
+                var texture = await FindTexture(textureName);
+                if (texture != null)
                 {
-                    _image.enabled = true;
+                    ReleaseCreatedImages();
+                    _createdTexture = texture;
                     _createdSprite = Sprite.Create(_createdTexture, new Rect(0, 0, _createdTexture.width, _createdTexture.height), Vector2.zero);
+                    _image.enabled = true;
                     _image.sprite = _createdSprite;
                 }
             }
