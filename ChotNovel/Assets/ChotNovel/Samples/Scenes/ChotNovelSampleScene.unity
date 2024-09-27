@@ -308,7 +308,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 674005393}
-          m_TargetAssemblyTypeName: MiniNovel.Player.NovelMessagePlayer, MiniNovel.Player
+          m_TargetAssemblyTypeName: ChotNovel.Player.NovelMessagePlayer, ChotNovel.Player
           m_MethodName: OnClick
           m_Mode: 1
           m_Arguments:
@@ -320,7 +320,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
         - m_Target: {fileID: 674005394}
-          m_TargetAssemblyTypeName: MiniNovel.Player.NovelPageBreaker, MiniNovel.Player
+          m_TargetAssemblyTypeName: ChotNovel.Player.NovelPageBreaker, ChotNovel.Player
           m_MethodName: OnClick
           m_Mode: 1
           m_Arguments:
@@ -332,7 +332,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
         - m_Target: {fileID: 674005396}
-          m_TargetAssemblyTypeName: MiniNovel.Player.NovelWait, MiniNovel.Player
+          m_TargetAssemblyTypeName: ChotNovel.Player.NovelWait, ChotNovel.Player
           m_MethodName: OnClick
           m_Mode: 1
           m_Arguments:
