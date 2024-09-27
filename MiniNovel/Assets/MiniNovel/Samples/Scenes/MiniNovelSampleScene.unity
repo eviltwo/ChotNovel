@@ -723,6 +723,7 @@ GameObject:
   - component: {fileID: 674005399}
   - component: {fileID: 674005400}
   - component: {fileID: 674005401}
+  - component: {fileID: 674005402}
   m_Layer: 0
   m_Name: Modules
   m_TagString: Untagged
@@ -883,6 +884,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
   _messageController: {fileID: 1858206974}
+--- !u!114 &674005402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674005391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9685b738ee4ac04a9f770c7d6dd1281, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 1670162766}
+  _commandName: jump
 --- !u!1 &765691133
 GameObject:
   m_ObjectHideFlags: 0

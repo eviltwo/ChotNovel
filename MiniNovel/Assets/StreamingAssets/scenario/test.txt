@@ -22,8 +22,15 @@ A or B
 
 *RouteA
 [talker name=Robo]
-You choose A.
+You choose A.[p]
+[jump label=Ending]
 
 *RouteB
 [talker name=John]
-You choose B.
+You choose B.[p]
+[jump label=Ending]
+
+*Ending
+[talker clear]
+End test[p]
+[jump file=test2 label=Start]
