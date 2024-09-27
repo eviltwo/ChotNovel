@@ -28,7 +28,7 @@ namespace MiniNovel.Player
             if (!TryGetActor(name, out _))
             {
                 var actorImage = Instantiate(_sourceImage, _actorParent);
-                actorImage.gameObject.name = name;
+                actorImage.gameObject.name = $"{_sourceImage.gameObject.name}_{name}";
                 var actor = new ActorController(name, actorImage);
                 _actors.Add(actor);
             }
