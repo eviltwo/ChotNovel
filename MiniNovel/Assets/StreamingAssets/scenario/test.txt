@@ -1,16 +1,16 @@
 *Start
 [background texture=bg_forest]
-[actor name=robo texture=robo layout=center]
+[actor name=Robo texture=robo layout=center]
 [talker name=Robo]
 Hello,[r]World![p]
-[actor name=robo texture=robo_happy]
-This is test message.
+[actor name=Robo texture=robo_happy]
+This is test message.[p]
 very long message. very very long. very very very very long.
 very very very very very very very very very very very long.
 very very very very very very very very very very very long.[p]
 
-[actor name=robo layout=right]
-[actor name=john texture=john layout=left]
+[actor name=Robo layout=right]
+[actor name=John texture=john layout=left]
 [talker name=John]
 Let's go![p]
 
