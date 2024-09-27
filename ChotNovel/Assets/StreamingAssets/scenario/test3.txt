@@ -1,0 +1,4 @@
+*Start
+This is test3 message.[p]
+I haven't written the "clear" command for the purpose of functionality testing, 
+but under normal circumstances, please make sure to always include it.[p]

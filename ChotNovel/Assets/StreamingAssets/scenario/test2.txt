@@ -1,3 +1,6 @@
 *Start
 [clear]
 This is test2 message.[p]
+[background texture=bg_forest]
+Jump to test3[p]
+[jump file=test3 label=Start]]
