@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/MiniNovel/Samples/Scenes/MiniNovelSampleScene.unity
+    path: Assets/ChotNovel/Samples/Scenes/ChotNovelSampleScene.unity
     guid: de844b57a68f6b543a84f99e2ee5f4fc
   m_configObjects: {}

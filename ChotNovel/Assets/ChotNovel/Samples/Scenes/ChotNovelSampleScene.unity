@@ -1464,7 +1464,7 @@ GameObject:
   - component: {fileID: 1670162766}
   - component: {fileID: 1670162765}
   m_Layer: 0
-  m_Name: MiniNovel
+  m_Name: ChotNovel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1523,7 +1523,7 @@ GameObject:
   - component: {fileID: 1769731316}
   - component: {fileID: 1769731315}
   m_Layer: 0
-  m_Name: NovelPlayerInitializer
+  m_Name: ChotNovel Initializer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
