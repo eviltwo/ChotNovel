@@ -24,4 +24,4 @@ https://github.com/eviltwo/MiniNovel.git?path=MiniNovel/Assets/MiniNovel
 ```
 
 # Example
-https://github.com/eviltwo/MiniNovel/blob/6618fef3964009ee705adb67a1ecf5a846f58a95/MiniNovel/Assets/StreamingAssets/scenario/test.txt#L1-L29
+https://github.com/eviltwo/MiniNovel/blob/4afed6a56f07d1c6140112e980560b917fdf64d0/MiniNovel/Assets/StreamingAssets/scenario/test.txt#L1-L29
