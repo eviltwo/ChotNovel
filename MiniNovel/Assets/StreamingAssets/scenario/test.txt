@@ -1,4 +1,4 @@
-*start
+*Start
 [background texture=bg_forest]
 [actor name=robo texture=robo layout=center]
 [talker name=Robo]
@@ -16,5 +16,12 @@ Let's go![p]
 
 [background texture=bg_beach]
 [talker clear]
-End
-[s]
+Choice A or B?
+[choice text=A label=ChoseA]
+[choice text=B label=ChoseB]
+
+*Chose A
+You chose A.
+
+*Chose B
+You chose B.

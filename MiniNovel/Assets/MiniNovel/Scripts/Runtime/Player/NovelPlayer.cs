@@ -10,7 +10,8 @@ namespace MiniNovel.Player
         private ITextContainer _textContainer;
         private List<NovelModule> _modules = new List<NovelModule>();
         private string _currentFileName;
-        private List<TextElement> _textElements;
+        private List<TextElement> _textElementBuffer = new List<TextElement>();
+        private List<TextElement> _textElements = new List<TextElement>();
         private CancellationTokenSource _playerCancellation;
 
         private void Awake()
@@ -58,44 +59,50 @@ namespace MiniNovel.Player
             if (_currentFileName != fileName)
             {
                 _currentFileName = fileName;
-                _textElements = new List<TextElement>();
-                var success = await _textContainer.LoadTextElements(fileName, _textElements, cancellationToken);
+                _textElementBuffer.Clear();
+                var success = await _textContainer.LoadTextElements(fileName, _textElementBuffer, cancellationToken);
                 if (!success)
                 {
                     Debug.LogError($"Failed to get text elements from {fileName}.");
                     return;
                 }
+                _textElements.Clear();
+                success = PickLabeledTextElements(_textElementBuffer, label, _textElements);
+                if (!success)
+                {
+                    Debug.LogError($"Label {label} is not found.");
+                    return;
+                }
             }
 
-            var labelIndex = _textElements.FindIndex(x => x.ElementType == TextElementType.Label && x.Content == label);
-            if (labelIndex < 0)
-            {
-                Debug.LogError($"Label {label} is not found.");
-                return;
-            }
-
-            await PlayTexts(labelIndex + 1, cancellationToken);
+            await PlayTexts(_textElements, cancellationToken);
         }
 
-        private async UniTask PlayTexts(int textElementIndex, CancellationToken cancellationToken)
+        private async UniTask PlayTexts(IReadOnlyList<TextElement> textElements, CancellationToken cancellationToken)
         {
             var payload = new NovelModulePayload();
             payload.Player = this;
-            for (int i = textElementIndex; i < _textElements.Count; i++)
+            foreach (var textElement in textElements)
             {
-                var textElement = _textElements[i];
                 await PlayModules(textElement, payload, cancellationToken);
             }
         }
 
         private async UniTask PlayModules(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
+            var excuted = false;
             foreach (var module in _modules)
             {
                 if (module.IsExecutable(textElement))
                 {
+                    excuted = true;
                     await module.Execute(textElement, payload, cancellationToken);
                 }
+            }
+
+            if (!excuted && textElement.ElementType != TextElementType.Label)
+            {
+                Debug.LogWarning($"No module is executed for {textElement.Content}");
             }
         }
 
@@ -107,6 +114,26 @@ namespace MiniNovel.Player
         public void UnregisterModule(NovelModule module)
         {
             _modules.Remove(module);
+        }
+
+        private static bool PickLabeledTextElements(List<TextElement> source, string label, List<TextElement> results)
+        {
+            results.Clear();
+            var startIndex = source.FindIndex(x => x.ElementType == TextElementType.Label && x.Content == label);
+            if (startIndex < 0)
+            {
+                return false;
+            }
+            var endIndex = source.FindIndex(startIndex + 1, x => x.ElementType == TextElementType.Label);
+            if (endIndex == -1)
+            {
+                results.AddRange(source.GetRange(startIndex, source.Count - startIndex));
+            }
+            else
+            {
+                results.AddRange(source.GetRange(startIndex, endIndex - startIndex));
+            }
+            return true;
         }
     }
 }
