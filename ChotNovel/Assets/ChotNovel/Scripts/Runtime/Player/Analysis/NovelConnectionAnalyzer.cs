@@ -39,19 +39,16 @@ namespace ChotNovel.Player
         private readonly List<TextElement> _textElementBuffer = new List<TextElement>();
         public void PushFileTexts(string file, IReadOnlyList<TextElement> textElements)
         {
-            _textElementBuffer.Clear();
-            foreach (var textElement in textElements)
+            var labels = textElements
+                .Where(v => v.ElementType == TextElementType.Label)
+                .Select(v => v.Content);
+            foreach (var label in labels)
             {
-                if (textElement.ElementType == TextElementType.Label && _textElementBuffer.Count > 0)
+                _textElementBuffer.Clear();
+                if (NovelPlayerUtility.PickLabeledTextElements(textElements, label, _textElementBuffer))
                 {
                     PushLabeledSection(file, _textElementBuffer);
-                    _textElementBuffer.Clear();
                 }
-                _textElementBuffer.Add(textElement);
-            }
-            if (_textElementBuffer.Count > 0)
-            {
-                PushLabeledSection(file, _textElementBuffer);
             }
         }
 

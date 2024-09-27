@@ -64,7 +64,7 @@ namespace ChotNovel.Player
                 return;
             }
             _textElements.Clear();
-            success = PickLabeledTextElements(_textElementBuffer, label, _textElements);
+            success = NovelPlayerUtility.PickLabeledTextElements(_textElementBuffer, label, _textElements);
             if (!success)
             {
                 Debug.LogError($"Label {label} is not found.");
@@ -119,26 +119,6 @@ namespace ChotNovel.Player
             {
                 module.ClearDisplayedObjects();
             }
-        }
-
-        private static bool PickLabeledTextElements(List<TextElement> source, string label, List<TextElement> results)
-        {
-            results.Clear();
-            var startIndex = source.FindIndex(x => x.ElementType == TextElementType.Label && x.Content == label);
-            if (startIndex < 0)
-            {
-                return false;
-            }
-            var endIndex = source.FindIndex(startIndex + 1, x => x.ElementType == TextElementType.Label);
-            if (endIndex == -1)
-            {
-                results.AddRange(source.GetRange(startIndex, source.Count - startIndex));
-            }
-            else
-            {
-                results.AddRange(source.GetRange(startIndex, endIndex - startIndex));
-            }
-            return true;
         }
     }
 }
