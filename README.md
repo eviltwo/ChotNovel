@@ -12,7 +12,7 @@ Unity向けの最小限のノベルゲームシステムです。
 - Game developers can extend commands by creating components.
 - (Unimplemented) Supports Unity.Localization.
 
-# Feature (日本語)
+# 特徴 (日本語)
 - スクリプトの構造はKAG(吉里吉里)やNaninovelを参考にしています。
 - スクリプト作成者がスクリプトに記述するコマンドやパラメータはできるだけ少なくなるように設計されています。
 - スクリプトはtxt形式で、streamingAssetsに格納します。
