@@ -3,7 +3,7 @@ Minimal novel engine for Unity.
 
 Unity向けの最小限のノベルゲームシステムです。
 
-# Feature (English)
+# Feature
 - The script structure is based on KAG (KiriKiri) and Naninovel.
 - The script is designed so that the commands and parameters written by the script creator are kept to a minimum.
 - The script will be in txt format and stored in streamingAssets.
@@ -12,7 +12,7 @@ Unity向けの最小限のノベルゲームシステムです。
 - Game developers can extend commands by creating components.
 - (Unimplemented) Supports Unity.Localization.
 
-# 特徴 (日本語)
+# 特徴
 - スクリプトの構造はKAG(吉里吉里)やNaninovelを参考にしています。
 - スクリプト作成者がスクリプトに記述するコマンドやパラメータはできるだけ少なくなるように設計されています。
 - スクリプトはtxt形式で、streamingAssetsに格納します。
