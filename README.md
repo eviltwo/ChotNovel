@@ -22,3 +22,6 @@ Minimal novel engine for Unity.
 ```
 https://github.com/eviltwo/MiniNovel.git?path=MiniNovel/Assets/MiniNovel
 ```
+
+# Example
+https://github.com/eviltwo/MiniNovel/blob/6618fef3964009ee705adb67a1ecf5a846f58a95/MiniNovel/Assets/StreamingAssets/scenario/test.txt#L1-L29
