@@ -1,22 +1,25 @@
 # MiniNovel
-Unity向けの最小限のノベルゲームシステムです。
 Minimal novel engine for Unity.
 
-# Feature (Japanese)
-- スクリプトの構造はKAG(吉里吉里)を参考にしています。
-- スクリプトはtxt形式で、streamingAssetsに格納します。
-- persistentDataPathに格納されたスクリプトが優先されるので、スクリプト作成者はUnityエディタを開かずに実行ファイルだけで再生確認ができます。
-- メッセージ・キャラ・背景のコマンドはデフォルトで用意されています。(未実装)BGM・SE
-- ゲーム開発者は、コンポーネントを作成することでコマンドを拡張できます。
-- (未実装)Unity.Localizationに対応しています。
+Unity向けの最小限のノベルゲームシステムです。
 
 # Feature (English)
-- The script structure is based on KAG (KiriKiri).
+- The script structure is based on KAG (KiriKiri) and Naninovel.
+- The script is designed so that the commands and parameters written by the script creator are kept to a minimum.
 - The script will be in txt format and stored in streamingAssets.
 - Since the script stored in persistentDataPath is prioritized, the script writer can verify playback using only the executable file without Unity Editor.
 - Commands for messages, characters, backgrounds are provided by default. (Unimplemented) Music, Sound
 - Game developers can extend commands by creating components.
 - (Unimplemented) Supports Unity.Localization.
+
+# Feature (日本語)
+- スクリプトの構造はKAG(吉里吉里)やNaninovelを参考にしています。
+- スクリプト作成者がスクリプトに記述するコマンドやパラメータはできるだけ少なくなるように設計されています。
+- スクリプトはtxt形式で、streamingAssetsに格納します。
+- persistentDataPathに格納されたスクリプトが優先されるので、スクリプト作成者はUnityエディタを開かずに実行ファイルだけで再生確認ができます。
+- メッセージ・キャラ・背景のコマンドはデフォルトで用意されています。(未実装)BGM・SE
+- ゲーム開発者は、コンポーネントを作成することでコマンドを拡張できます。
+- (未実装)Unity.Localizationに対応しています。
 
 # Install with UPM
 ```
