@@ -27,4 +27,4 @@ https://github.com/eviltwo/ChotNovel.git?path=ChotNovel/Assets/ChotNovel
 ```
 
 # Example
-https://github.com/eviltwo/ChotNovel/blob/4afed6a56f07d1c6140112e980560b917fdf64d0/ChotNovel/Assets/StreamingAssets/scenario/test.txt#L1-L29
+https://github.com/eviltwo/ChotNovel/blob/24799f3540a574c5eea4823f5d41300826b931d5/ChotNovel/Assets/StreamingAssets/scenario/test.txt#L1-L37
