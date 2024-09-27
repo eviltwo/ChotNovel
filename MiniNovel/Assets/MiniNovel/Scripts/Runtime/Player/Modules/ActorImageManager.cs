@@ -14,11 +14,6 @@ namespace MiniNovel.Player
 
         private List<ActorController> _actors = new List<ActorController>();
 
-        private void Awake()
-        {
-            _sourceImage.gameObject.SetActive(false);
-        }
-
         private void OnDestroy()
         {
             foreach (var actor in _actors)
