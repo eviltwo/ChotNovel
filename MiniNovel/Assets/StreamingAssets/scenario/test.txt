@@ -17,13 +17,13 @@ Let's go![p]
 [background texture=bg_beach]
 [talker clear]
 A or B
-[choice text=A label=ChoseA]
-[choice text=B label=ChoseB]
+[choice text="Choose A" label=RouteA]
+[choice text="Choose B" label=RouteB]
 
-*ChoseA
+*RouteA
 [talker name=Robo]
-You chose A.
+You choose A.
 
-*ChoseB
+*RouteB
 [talker name=John]
-You chose B.
+You choose B.

@@ -9,8 +9,8 @@ namespace MiniNovel.Tests
         private string _source = @"
 *Label1|Label1Name
 Hello
-[Command1 param1=aaa param2=123 param3=1.23 param4]
-@Command2 param1=aaa param2=123 param3=1.23 param4
+[Command1 strParam=aaa quoteParam=""aa bb"" intParam=123 floatParam=1.23 nameOnlyParam]
+@Command2 strParam=aaa quoteParam=""aa bb"" intParam=123 floatParam=1.23 nameOnlyParam
 
 *Label2
 World[Command3]OK[Command4]
@@ -58,22 +58,30 @@ Last Text";
             TextParser.Parse(_source, result);
             var commands = result.Where(v => v.ElementType == TextElementType.Command).ToList();
             Assert.AreEqual(4, commands.Count);
-            Assert.AreEqual("Command1", commands[0].Content);
-            Assert.AreEqual(true, commands[0].TryGetStringParameter("param1", out var param1));
-            Assert.AreEqual("aaa", param1);
-            Assert.AreEqual(true, commands[0].TryGetIntParameter("param2", out var param2));
-            Assert.AreEqual(123, param2);
-            Assert.AreEqual(true, commands[0].TryGetFloatParameter("param3", out var param3));
-            Assert.AreEqual(1.23f, param3);
-            Assert.AreEqual(true, commands[0].TryGetStringParameter("param4", out var _));
-            Assert.AreEqual("Command2", commands[1].Content);
-            Assert.AreEqual(true, commands[1].TryGetStringParameter("param1", out param1));
-            Assert.AreEqual("aaa", param1);
-            Assert.AreEqual(true, commands[1].TryGetIntParameter("param2", out param2));
-            Assert.AreEqual(123, param2);
-            Assert.AreEqual(true, commands[1].TryGetFloatParameter("param3", out param3));
-            Assert.AreEqual(1.23f, param3);
-            Assert.AreEqual(true, commands[1].TryGetStringParameter("param4", out var _));
+            {
+                Assert.AreEqual("Command1", commands[0].Content);
+                Assert.AreEqual(true, commands[0].TryGetStringParameter("strParam", out var strValue), "strParam exists");
+                Assert.AreEqual("aaa", strValue);
+                Assert.AreEqual(true, commands[0].TryGetStringParameter("quoteParam", out var quoteValue), "quateParam exists");
+                Assert.AreEqual("aa bb", quoteValue);
+                Assert.AreEqual(true, commands[0].TryGetIntParameter("intParam", out var intValue), "intParam exists");
+                Assert.AreEqual(123, intValue);
+                Assert.AreEqual(true, commands[0].TryGetFloatParameter("floatParam", out var floatValue), "floatParam exists");
+                Assert.AreEqual(1.23f, floatValue);
+                Assert.AreEqual(true, commands[0].TryGetStringParameter("nameOnlyParam", out var _), "nameOnlyParam exists");
+            }
+            {
+                Assert.AreEqual("Command2", commands[1].Content);
+                Assert.AreEqual(true, commands[1].TryGetStringParameter("strParam", out var strValue), "strParam exists");
+                Assert.AreEqual("aaa", strValue);
+                Assert.AreEqual(true, commands[1].TryGetStringParameter("quoteParam", out var quoteValue), "quateParam exists");
+                Assert.AreEqual("aa bb", quoteValue);
+                Assert.AreEqual(true, commands[1].TryGetIntParameter("intParam", out var intValue), "intParam exists");
+                Assert.AreEqual(123, intValue);
+                Assert.AreEqual(true, commands[1].TryGetFloatParameter("floatParam", out var floatValue), "floatParam exists");
+                Assert.AreEqual(1.23f, floatValue);
+                Assert.AreEqual(true, commands[1].TryGetStringParameter("nameOnlyParam", out var _), "nameOnlyParam exists");
+            }
             Assert.AreEqual("Command3", commands[2].Content);
             Assert.AreEqual("Command4", commands[3].Content);
         }

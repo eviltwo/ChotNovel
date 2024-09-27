@@ -114,6 +114,8 @@ namespace MiniNovel
             return element;
         }
 
+        private static List<string> _commandParamBuffer = new List<string>();
+        private static StringBuilder _commandParamStringBuilder = new StringBuilder();
         private static TextElement ParseCommand(string commandSource)
         {
             var splitResults = commandSource.Split(CommandParamSeparator);
@@ -122,14 +124,51 @@ namespace MiniNovel
                 return new TextElement(string.Empty, TextElementType.Command);
             }
 
-            var element = new TextElement(splitResults[0], TextElementType.Command);
-            for (var i = 1; i < splitResults.Length; i++)
+            _commandParamBuffer.Clear();
+            _commandParamStringBuilder.Clear();
+            var quote = false;
+            for (int i = 0; i < splitResults.Length; i++)
             {
-                if (string.IsNullOrEmpty(splitResults[i]))
+                var param = splitResults[i];
+                if (quote)
+                {
+                    _commandParamStringBuilder.Append(CommandParamSeparator);
+                    if (param.EndsWith("\""))
+                    {
+                        _commandParamStringBuilder.Append(param.Replace("\"", ""));
+                        _commandParamBuffer.Add(_commandParamStringBuilder.ToString());
+                        _commandParamStringBuilder.Clear();
+                        quote = false;
+                    }
+                    else
+                    {
+                        _commandParamStringBuilder.Append(param.Replace("\"", ""));
+                    }
+                }
+                else
+                {
+                    var quateCount = param.Length - param.Replace("\"", "").Length;
+                    if (quateCount == 1)
+                    {
+                        quote = true;
+                        _commandParamStringBuilder.Append(param.Replace("\"", ""));
+                    }
+                    else
+                    {
+                        _commandParamBuffer.Add(param.Replace("\"", ""));
+                    }
+                }
+            }
+
+            var element = new TextElement(splitResults[0], TextElementType.Command);
+            for (var i = 1; i < _commandParamBuffer.Count; i++)
+            {
+                var param = _commandParamBuffer[i];
+                if (string.IsNullOrEmpty(param))
                 {
                     continue;
                 }
-                var keyValue = splitResults[i].Split(CommandKeyValueSeparator);
+                var keyValue = param.Split(CommandKeyValueSeparator);
                 if (keyValue.Length == 1)
                 {
                     element.AddParameter(keyValue[0], string.Empty);
@@ -140,7 +179,7 @@ namespace MiniNovel
                 }
                 else
                 {
-                    Debug.LogError("Invalid command parameter: " + splitResults[i]);
+                    Debug.LogError("Invalid command parameter: " + param);
                 }
             }
             return element;
