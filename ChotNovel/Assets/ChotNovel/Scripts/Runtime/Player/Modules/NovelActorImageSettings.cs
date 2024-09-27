@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ChotNovel.Player
 {
-    [CreateAssetMenu(fileName = nameof(NovelActorImageSettings), menuName = "MiniNovel/" + nameof(NovelActorImageSettings))]
+    [CreateAssetMenu(fileName = nameof(NovelActorImageSettings), menuName = NovelModuleDefine.AssetMenuRoot + "/" + nameof(NovelActorImageSettings))]
     public class NovelActorImageSettings : ScriptableObject
     {
         [System.Serializable]
