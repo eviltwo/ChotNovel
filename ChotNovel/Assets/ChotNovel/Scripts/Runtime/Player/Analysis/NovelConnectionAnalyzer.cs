@@ -28,7 +28,13 @@ namespace ChotNovel.Player
             }
         }
 
+        private readonly List<string> _commands = new List<string>();
         private readonly List<Connection> _connections = new List<Connection>();
+
+        public void AddTargetCommands(string commandName)
+        {
+            _commands.Add(commandName);
+        }
 
         private readonly List<TextElement> _textElementBuffer = new List<TextElement>();
         public void PushFileTexts(string file, IReadOnlyList<TextElement> textElements)
@@ -60,7 +66,7 @@ namespace ChotNovel.Player
 
             var jumpElements = textElements
                 .Where(v => v.ElementType == TextElementType.Command)
-                .Where(v => v.Content == "jump" || v.Content == "choice");
+                .Where(v => _commands.Contains(v.Content));
             foreach (var jumpElement in jumpElements)
             {
                 var from = new LabelAddress(file, label.Content);
