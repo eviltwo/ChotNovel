@@ -2,7 +2,8 @@
     "name": "ChotNovel.Tests",
     "rootNamespace": "ChotNovel.Tests",
     "references": [
-        "GUID:0068a2aada7a39e4a9337389723a87d8"
+        "GUID:0068a2aada7a39e4a9337389723a87d8",
+        "GUID:ed7aaae76dd27c64b97b1de95f042a41"
     ],
     "includePlatforms": [
         "Editor"
