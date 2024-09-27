@@ -30,7 +30,7 @@ namespace MiniNovel.Player
             _clicked = false;
             await UniTask.WaitUntil(() => _clicked, cancellationToken: cancellationToken);
             _messageController.ClearMessage();
-            payload.SkipToStopper = false;
+            payload.SkipToEndOfPage = false;
         }
 
         public void OnClick()

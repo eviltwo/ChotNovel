@@ -33,13 +33,13 @@ namespace MiniNovel.Player
             var message = textElement.Content;
             _messageController.PushMessage(message);
             var interval = _settings.MessageInterval * MessageIntervalMultiplier;
-            if (interval == 0 || payload.SkipToStopper)
+            if (interval == 0 || payload.SkipToEndOfPage)
             {
                 _messageController.ShowAllCharacter();
             }
             else
             {
-                System.Action skipCallback = () => payload.SkipToStopper = true;
+                System.Action skipCallback = () => payload.SkipToEndOfPage = true;
                 _clickeEvent += skipCallback;
                 try
                 {
@@ -48,7 +48,7 @@ namespace MiniNovel.Player
                     {
                         await UniTask.WaitForSeconds(interval, cancellationToken: cancellationToken);
                         _messageController.ShowNextCharacter();
-                        if (payload.SkipToStopper)
+                        if (payload.SkipToEndOfPage)
                         {
                             _messageController.ShowAllCharacter();
                             break;

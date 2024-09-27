@@ -22,7 +22,7 @@ namespace MiniNovel.Player
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
-            if (payload.SkipToStopper)
+            if (payload.SkipToEndOfPage)
             {
                 return;
             }
@@ -38,7 +38,7 @@ namespace MiniNovel.Player
             await UniTask.WhenAny(clickTask, timeTask);
             if (_clicked)
             {
-                payload.SkipToStopper = true;
+                payload.SkipToEndOfPage = true;
             }
         }
 
