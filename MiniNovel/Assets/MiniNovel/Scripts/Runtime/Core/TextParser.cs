@@ -16,15 +16,15 @@ namespace MiniNovel
         public static char CommandParamSeparator = ' ';
         public static char CommandKeyValueSeparator = '=';
 
-        private static StringBuilder _messageBuffer = new StringBuilder();
-        private static StringBuilder _commandBuffer = new StringBuilder();
+        private static StringBuilder _messageStringBuilder = new StringBuilder();
+        private static StringBuilder _commandStringBuilder = new StringBuilder();
 
         public static void Parse(string source, List<TextElement> results)
         {
             using (var reader = new StringReader(source))
             {
                 var line = string.Empty;
-                _messageBuffer.Clear();
+                _messageStringBuilder.Clear();
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (string.IsNullOrEmpty(line))
@@ -34,69 +34,69 @@ namespace MiniNovel
 
                     if (line.StartsWith(LabelSymbol))
                     {
-                        if (_messageBuffer.Length > 0)
+                        if (_messageStringBuilder.Length > 0)
                         {
-                            results.Add(new TextElement(_messageBuffer.ToString(), TextElementType.Message));
-                            _messageBuffer.Clear();
+                            results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
+                            _messageStringBuilder.Clear();
                         }
                         // TODO: Add label parameters
                         results.Add(ParseLabel(line.Substring(1)));
                     }
                     else if (line.StartsWith(CommandSymbol))
                     {
-                        if (_messageBuffer.Length > 0)
+                        if (_messageStringBuilder.Length > 0)
                         {
-                            results.Add(new TextElement(_messageBuffer.ToString(), TextElementType.Message));
-                            _messageBuffer.Clear();
+                            results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
+                            _messageStringBuilder.Clear();
                         }
                         results.Add(ParseCommand(line.Substring(1)));
                     }
                     else
                     {
-                        _commandBuffer.Clear();
+                        _commandStringBuilder.Clear();
                         var charIndex = 0;
                         while (charIndex < line.Length)
                         {
                             if (line[charIndex] == CommandStartSymbol)
                             {
-                                if (_messageBuffer.Length > 0)
+                                if (_messageStringBuilder.Length > 0)
                                 {
-                                    results.Add(new TextElement(_messageBuffer.ToString(), TextElementType.Message));
-                                    _messageBuffer.Clear();
+                                    results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
+                                    _messageStringBuilder.Clear();
                                 }
 
                                 charIndex++;
                                 while (charIndex < line.Length)
                                 {
-                                    if (line[charIndex] == CommandEndSymbol && _commandBuffer.Length > 0)
+                                    if (line[charIndex] == CommandEndSymbol && _commandStringBuilder.Length > 0)
                                     {
-                                        results.Add(ParseCommand(_commandBuffer.ToString()));
-                                        _commandBuffer.Clear();
+                                        results.Add(ParseCommand(_commandStringBuilder.ToString()));
+                                        _commandStringBuilder.Clear();
                                         break;
                                     }
                                     else
                                     {
-                                        _commandBuffer.Append(line[charIndex]);
+                                        _commandStringBuilder.Append(line[charIndex]);
                                         charIndex++;
                                     }
                                 }
-                                if (_commandBuffer.Length > 0)
+                                if (_commandStringBuilder.Length > 0)
                                 {
-                                    Debug.LogError("Command not closed: " + _commandBuffer.ToString());
+                                    Debug.LogError("Command not closed: " + _commandStringBuilder.ToString());
                                 }
                             }
                             else
                             {
-                                _messageBuffer.Append(line[charIndex]);
+                                _messageStringBuilder.Append(line[charIndex]);
                             }
                             charIndex++;
                         }
                     }
                 }
-                if (_messageBuffer.Length > 0)
+                if (_messageStringBuilder.Length > 0)
                 {
-                    results.Add(new TextElement(_messageBuffer.ToString(), TextElementType.Message));
-                    _messageBuffer.Clear();
+                    results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
+                    _messageStringBuilder.Clear();
                 }
             }
         }
