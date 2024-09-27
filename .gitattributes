@@ -2,4 +2,4 @@
 * text=auto
 
 # Ignore TMPro files for linguist.
-MiniNovel/Assets/TextMesh[[:space:]]Pro/** linguist-vendored
+ChotNovel/Assets/TextMesh[[:space:]]Pro/** linguist-vendored
