@@ -1,7 +1,7 @@
-# MiniNovel
-Minimal novel engine for Unity.
+# ChotNovel
+Simple novel engine for Unity.
 
-Unity向けの最小限のノベルゲームシステムです。
+Unity向けのシンプルなノベルゲームシステムです。
 
 # Feature
 - The script structure is based on KAG (KiriKiri) and Naninovel.
@@ -23,8 +23,8 @@ Unity向けの最小限のノベルゲームシステムです。
 
 # Install with UPM
 ```
-https://github.com/eviltwo/MiniNovel.git?path=MiniNovel/Assets/MiniNovel
+https://github.com/eviltwo/ChotNovel.git?path=ChotNovel/Assets/ChotNovel
 ```
 
 # Example
-https://github.com/eviltwo/MiniNovel/blob/4afed6a56f07d1c6140112e980560b917fdf64d0/MiniNovel/Assets/StreamingAssets/scenario/test.txt#L1-L29
+https://github.com/eviltwo/ChotNovel/blob/4afed6a56f07d1c6140112e980560b917fdf64d0/ChotNovel/Assets/StreamingAssets/scenario/test.txt#L1-L29
