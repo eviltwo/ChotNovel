@@ -16,12 +16,14 @@ Let's go![p]
 
 [background texture=bg_beach]
 [talker clear]
-Choice A or B?
+A or B
 [choice text=A label=ChoseA]
 [choice text=B label=ChoseB]
 
-*Chose A
+*ChoseA
+[talker name=Robo]
 You chose A.
 
-*Chose B
+*ChoseB
+[talker name=John]
 You chose B.

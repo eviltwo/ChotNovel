@@ -9,7 +9,7 @@ namespace MiniNovel.Player
     {
         private ITextContainer _textContainer;
         private List<NovelModule> _modules = new List<NovelModule>();
-        private string _currentFileName;
+        private string _lastPlayedFileName;
         private List<TextElement> _textElementBuffer = new List<TextElement>();
         private List<TextElement> _textElements = new List<TextElement>();
         private CancellationTokenSource _playerCancellation;
@@ -26,7 +26,7 @@ namespace MiniNovel.Player
 
         public void Play(string label)
         {
-            Play(_currentFileName, label);
+            Play(_lastPlayedFileName, label);
         }
 
         public void Play(string fileName, string label)
@@ -56,25 +56,22 @@ namespace MiniNovel.Player
                 return;
             }
 
-            if (_currentFileName != fileName)
+            _textElementBuffer.Clear();
+            var success = await _textContainer.LoadTextElements(fileName, _textElementBuffer, cancellationToken);
+            if (!success)
             {
-                _currentFileName = fileName;
-                _textElementBuffer.Clear();
-                var success = await _textContainer.LoadTextElements(fileName, _textElementBuffer, cancellationToken);
-                if (!success)
-                {
-                    Debug.LogError($"Failed to get text elements from {fileName}.");
-                    return;
-                }
-                _textElements.Clear();
-                success = PickLabeledTextElements(_textElementBuffer, label, _textElements);
-                if (!success)
-                {
-                    Debug.LogError($"Label {label} is not found.");
-                    return;
-                }
+                Debug.LogError($"Failed to get text elements from {fileName}.");
+                return;
+            }
+            _textElements.Clear();
+            success = PickLabeledTextElements(_textElementBuffer, label, _textElements);
+            if (!success)
+            {
+                Debug.LogError($"Label {label} is not found.");
+                return;
             }
 
+            _lastPlayedFileName = fileName;
             await PlayTexts(_textElements, cancellationToken);
         }
 
