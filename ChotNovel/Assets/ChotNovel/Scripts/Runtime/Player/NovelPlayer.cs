@@ -63,82 +63,27 @@ namespace ChotNovel.Player
             var analyzer = new NovelPlaybackPositionAnalyzer();
             analyzer.AddJumpCommand("jump");
             analyzer.AddJumpCommand("choice");
-            var result = await analyzer.Analyze(file, label, step, _textContainer, cancellationToken);
-            if (!result.Success)
+            _textElementBuffer.Clear();
+            var result = await analyzer.CollectPreviousTextElements(file, label, step, _textContainer, _textElementBuffer, cancellationToken);
+            if (!result)
             {
                 Debug.LogError($"Failed to analyze playback position. file:{file}, label:{label}, step:{step}");
                 return;
             }
 
             var playbackController = new DefaultPlaybackController();
-
-            // Normal playback
-            if (result.JumpTargets.Count == 0)
+            if (_textElementBuffer.Count > 0)
             {
-                if (await LoadLabeledTextElements(file, label, _textElementBuffer, cancellationToken))
-                {
-                    _lastPlayedFileName = file;
-                    if (step == 0)
-                    {
-                        _playbackParams.Payload.IgnoreWait = false;
-                        _playbackParams.Payload.IgnoreJump = false;
-                        await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
-                        return;
-                    }
-
-                    // first element to last-1 element
-                    _playbackParams.Payload.IgnoreWait = true;
-                    _playbackParams.Payload.IgnoreJump = false;
-                    var elements = _textElementBuffer.GetRange(result.StartStep, step - result.StartStep);
-                    await playbackController.PlayTexts(elements, _playbackParams, cancellationToken);
-                    // remain element
-                    _playbackParams.Payload.IgnoreWait = false;
-                    _playbackParams.Payload.IgnoreJump = false;
-                    elements = _textElementBuffer.GetRange(step, _textElementBuffer.Count - step);
-                    await playbackController.PlayTexts(elements, _playbackParams, cancellationToken);
-                }
-                return;
-            }
-
-            // Play first label
-            _playbackParams.Payload.IgnoreWait = true;
-            _playbackParams.Payload.IgnoreJump = true;
-            if (await LoadLabeledTextElements(result.StartFile, result.StartLabel, _textElementBuffer, cancellationToken))
-            {
-                _lastPlayedFileName = result.StartFile;
+                _playbackParams.Payload.IgnoreWait = true;
                 await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
             }
-            // Play second to last-1 label
-            for (var i = 0; i < result.JumpTargets.Count - 1; i++)
-            {
-                if (await LoadLabeledTextElements(result.JumpTargets[i].File, result.JumpTargets[i].Label, _textElementBuffer, cancellationToken))
-                {
-                    _lastPlayedFileName = result.JumpTargets[i].File;
-                    await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
-                }
-            }
-            // Play last label
-            _playbackParams.Payload.IgnoreJump = false;
+            _textElementBuffer.Clear();
             if (await LoadLabeledTextElements(file, label, _textElementBuffer, cancellationToken))
             {
                 _lastPlayedFileName = file;
-                if (step == 0)
-                {
-                    _playbackParams.Payload.IgnoreWait = false;
-                    _playbackParams.Payload.IgnoreJump = false;
-                    await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
-                    return;
-                }
-
-                // first element to last-1 element
-                var elements = _textElementBuffer.GetRange(0, step);
-                await playbackController.PlayTexts(elements, _playbackParams, cancellationToken);
-                // remain element
                 _playbackParams.Payload.IgnoreWait = false;
-                _playbackParams.Payload.IgnoreJump = false;
-                elements = _textElementBuffer.GetRange(step, _textElementBuffer.Count - step);
-                await playbackController.PlayTexts(elements, _playbackParams, cancellationToken);
-                return;
+                _textElementBuffer.RemoveRange(0, step);
+                await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
             }
         }
 

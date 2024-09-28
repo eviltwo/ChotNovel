@@ -6,21 +6,6 @@ namespace ChotNovel.Player
 {
     public class NovelPlaybackPositionAnalyzer
     {
-        public class Result
-        {
-            public bool Success;
-            public string StartFile;
-            public string StartLabel;
-            public int StartStep;
-            public List<LabelAddress> JumpTargets;
-        }
-
-        public class LabelAddress
-        {
-            public string File;
-            public string Label;
-        }
-
         private string _clearCommand = "clear";
         private List<string> _jumpCommands = new List<string>();
 
@@ -37,8 +22,9 @@ namespace ChotNovel.Player
             }
         }
 
-        public async UniTask<Result> Analyze(string file, string label, int step, ITextContainer textContainer, CancellationToken cancellationToken)
+        public async UniTask<bool> CollectPreviousTextElements(string file, string label, int step, ITextContainer textContainer, List<TextElement> results, CancellationToken cancellationToken)
         {
+            results.Clear();
             var fileElements = new List<TextElement>();
             var pickedElements = new List<TextElement>();
             var isSuccessPick = await textContainer.LoadTextElements(file, fileElements, cancellationToken)
@@ -46,7 +32,7 @@ namespace ChotNovel.Player
                 && pickedElements.Count > step;
             if (!isSuccessPick)
             {
-                return new Result { Success = false };
+                return false;
             }
 
             var hasClearCommand = step == 0
@@ -55,47 +41,36 @@ namespace ChotNovel.Player
                 && pickedElements[1].Content == _clearCommand;
             if (hasClearCommand)
             {
-                return new Result
-                {
-                    Success = true,
-                    StartFile = file,
-                    StartLabel = label,
-                    StartStep = step,
-                    JumpTargets = new List<LabelAddress>()
-                };
+                return true;
             }
 
-            var jumpTargets = new List<LabelAddress>();
-
             // Search clear command from current label section.
-            var foundIndex = FindClearCommandBefore(pickedElements, step);
-            if (foundIndex > 0)
+            // Allow including jump command.
+            for (int i = step - 1; i >= 0; i--)
             {
-                return new Result
+                var element = pickedElements[i];
+                results.Insert(0, element);
+                if (element.ElementType == TextElementType.Command && element.Content == _clearCommand)
                 {
-                    Success = true,
-                    StartFile = file,
-                    StartLabel = label,
-                    StartStep = foundIndex,
-                    JumpTargets = jumpTargets
-                };
+                    return true;
+                }
             }
 
             // Search previous label from current file.
-            jumpTargets.Add(new LabelAddress { File = file, Label = label });
+            // Not allow including jump command.
             var connectionAnalyzer = new NovelConnectionAnalyzer();
             connectionAnalyzer.AddTargetCommands(_jumpCommands);
             connectionAnalyzer.PushFileTexts(file, fileElements);
             var previousLabels = connectionAnalyzer.GetPreviousLabels(file, label);
             if (previousLabels.Count == 0)
             {
-                return new Result { Success = false };
+                return false;
             }
             var previousLabel = previousLabels[0];
             var previousElements = new List<TextElement>();
             if (!NovelPlayerUtility.PickLabeledTextElements(fileElements, previousLabel.Label, previousElements))
             {
-                return new Result { Success = false };
+                return false;
             }
             var jumpElementStep = previousElements.FindIndex(v =>
                     v.ElementType == TextElementType.Command
@@ -104,40 +79,24 @@ namespace ChotNovel.Player
                     && labelValue == label);
             if (jumpElementStep == -1)
             {
-                return new Result { Success = false };
+                return false;
             }
-            var previousFoundIndex = FindClearCommandBefore(previousElements, jumpElementStep);
-            if (previousFoundIndex > 0)
+            for (int i = jumpElementStep; i >= 0; i--)
             {
-                return new Result
+                var element = previousElements[i];
+                if (element.ElementType == TextElementType.Command && _jumpCommands.Contains(element.Content))
                 {
-                    Success = true,
-                    StartFile = file,
-                    StartLabel = previousLabel.Label,
-                    StartStep = previousFoundIndex,
-                    JumpTargets = jumpTargets
-                };
+                    continue;
+                }
+                results.Insert(0, element);
+                if (element.ElementType == TextElementType.Command && element.Content == _clearCommand)
+                {
+                    return true;
+                }
             }
 
             // TODO: Search previous label from other files.
-            return new Result { Success = false };
-        }
-
-        public int FindClearCommandBefore(List<TextElement> elements, int startIndex)
-        {
-            if (startIndex < 0 || startIndex >= elements.Count)
-            {
-                return -1;
-            }
-            for (int i = startIndex; i >= 0; i--)
-            {
-                var element = elements[i];
-                if (element.ElementType == TextElementType.Command && element.Content == _clearCommand)
-                {
-                    return i;
-                }
-            }
-            return -1;
+            return false;
         }
     }
 }
