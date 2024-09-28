@@ -39,7 +39,7 @@ namespace ChotNovel.Player
             var message = textElement.Content;
             _messageController.PushMessage(message);
             var interval = _settings.MessageInterval * MessageIntervalMultiplier;
-            if (interval == 0 || payload.SkipToEndOfPage)
+            if (interval == 0 || payload.SkipToEndOfPage || payload.IgnoreWait)
             {
                 _messageController.ShowAllCharacter();
             }

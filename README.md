@@ -9,6 +9,7 @@ Unity向けのシンプルなノベルゲームシステムです。
 - The script will be in txt format and stored in streamingAssets.
 - Since the script stored in persistentDataPath is prioritized, the script writer can verify playback using only the executable file without Unity Editor.
 - Commands for messages, characters, backgrounds are provided by default. (Unimplemented) Music, Sound
+- You can save and load anywhere. There is no need to write labels or any kind of markers for saving.
 - Game developers can extend commands by creating components.
 - (Unimplemented) Supports Unity.Localization.
 
@@ -18,6 +19,7 @@ Unity向けのシンプルなノベルゲームシステムです。
 - スクリプトはtxt形式で、streamingAssetsに格納します。
 - persistentDataPathに格納されたスクリプトが優先されるので、スクリプト作成者はUnityエディタを開かずに実行ファイルだけで再生確認ができます。
 - メッセージ・キャラ・背景のコマンドはデフォルトで用意されています。(未実装)BGM・SE
+- どこでもセーブ＆ロードができます。セーブのためにラベルや何らかの目印を書く必要はありません。
 - ゲーム開発者は、コンポーネントを作成することでコマンドを拡張できます。
 - (未実装)Unity.Localizationに対応しています。
 

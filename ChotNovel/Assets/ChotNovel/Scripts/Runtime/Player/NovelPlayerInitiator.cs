@@ -20,7 +20,7 @@ namespace ChotNovel.Player
 
         private void Start()
         {
-            _player.Play(_fileName, _label);
+            _player.Play(_fileName, _label, 0);
         }
     }
 }

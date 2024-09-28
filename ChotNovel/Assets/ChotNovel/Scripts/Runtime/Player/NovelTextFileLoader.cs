@@ -53,5 +53,41 @@ namespace ChotNovel.Player
 
             return encoding.GetString(request.downloadHandler.data);
         }
+
+        public UniTask<bool> GetAllFileName(List<string> results, CancellationToken cancellationToken)
+        {
+            // TODO: Since GetFiles() does not work on Android OS, create a file listing the file names.
+            results.Clear();
+            var persistentFolderPath = Path.Combine(Application.persistentDataPath, _folderName);
+            if (Directory.Exists(persistentFolderPath))
+            {
+                var files = Directory.GetFiles(persistentFolderPath)
+                    .Select(GetFileNameWithoutExAndMeta)
+                    .Distinct();
+                results.AddRange(files);
+            }
+
+            var streamingAssetsFolderPath = Path.Combine(Application.streamingAssetsPath, _folderName);
+            if (Directory.Exists(streamingAssetsFolderPath))
+            {
+                var files = Directory.GetFiles(streamingAssetsFolderPath)
+                    .Select(GetFileNameWithoutExAndMeta)
+                    .Distinct()
+                    .Where(fileName => !results.Contains(fileName));
+                results.AddRange(files);
+            }
+            results.Sort();
+            return UniTask.FromResult(true);
+        }
+
+        public static string GetFileNameWithoutExAndMeta(string filePath)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            if (filePath.EndsWith(".meta"))
+            {
+                fileName = Path.GetFileNameWithoutExtension(fileName);
+            }
+            return fileName;
+        }
     }
 }

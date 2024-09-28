@@ -27,8 +27,11 @@ namespace ChotNovel.Player
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
-            _clicked = false;
-            await UniTask.WaitUntil(() => _clicked, cancellationToken: cancellationToken);
+            if (!payload.IgnoreWait)
+            {
+                _clicked = false;
+                await UniTask.WaitUntil(() => _clicked, cancellationToken: cancellationToken);
+            }
             _messageController.ClearMessage();
             payload.SkipToEndOfPage = false;
         }

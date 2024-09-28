@@ -48,8 +48,8 @@ namespace ChotNovel.Tests
             }
             // Push texts
             _analyzer = new NovelConnectionAnalyzer();
-            _analyzer.AddTargetCommands("jump");
-            _analyzer.AddTargetCommands("choice");
+            _analyzer.AddTargetCommand("jump");
+            _analyzer.AddTargetCommand("choice");
             _analyzer.PushFileTexts("file1", _file1Texts);
             _analyzer.PushFileTexts("file2", _file2Texts);
             _analyzer.PushFileTexts("file3", _file3Texts);
