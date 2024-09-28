@@ -16,6 +16,11 @@ namespace ChotNovel.Player
 
         public override UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
+            if (payload.IgnoreJump)
+            {
+                return UniTask.CompletedTask;
+            }
+
             if (textElement.TryGetStringParameter("label", out var labelName))
             {
                 if (textElement.TryGetStringParameter("file", out var fileName))

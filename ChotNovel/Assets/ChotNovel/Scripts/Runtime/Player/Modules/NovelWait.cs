@@ -22,7 +22,7 @@ namespace ChotNovel.Player
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
-            if (payload.SkipToEndOfPage)
+            if (payload.SkipToEndOfPage || payload.IgnoreWait)
             {
                 return;
             }

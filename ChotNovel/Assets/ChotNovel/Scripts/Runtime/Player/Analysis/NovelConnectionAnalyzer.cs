@@ -31,9 +31,17 @@ namespace ChotNovel.Player
         private readonly List<string> _commands = new List<string>();
         private readonly List<Connection> _connections = new List<Connection>();
 
-        public void AddTargetCommands(string commandName)
+        public void AddTargetCommand(string commandName)
         {
             _commands.Add(commandName);
+        }
+
+        public void AddTargetCommands(IReadOnlyList<string> commandNames)
+        {
+            foreach (var commandName in commandNames)
+            {
+                AddTargetCommand(commandName);
+            }
         }
 
         private readonly List<TextElement> _textElementBuffer = new List<TextElement>();
