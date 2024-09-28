@@ -24,12 +24,29 @@ namespace ChotNovel.Player
             }
         }
 
-        public void Play(string label)
+        /// <summary>
+        /// Start playback from a specific label within a specific file.
+        /// </summary>
+        public void Play(string file, string label)
         {
-            Play(_lastPlayedFileName, label);
+            ClearDisplayedObjects();
+            // TODO: Rewind to "clear" command and setup environment.
+            //       This is dummy implementation.
+            Jump(file, label);
         }
 
-        public void Play(string fileName, string label)
+        /// <summary>
+        /// Jump to a specific label within the file being played.
+        /// </summary>
+        public void Jump(string label)
+        {
+            Jump(_lastPlayedFileName, label);
+        }
+
+        /// <summary>
+        /// Jump to a specific label within a specific file.
+        /// </summary>
+        public void Jump(string file, string label)
         {
             if (_playerCancellation != null)
             {
@@ -39,12 +56,12 @@ namespace ChotNovel.Player
             }
 
             _playerCancellation = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
-            PlayInternal(fileName, label, _playerCancellation.Token).Forget();
+            JumpInternal(file, label, _playerCancellation.Token).Forget();
         }
 
-        private async UniTask PlayInternal(string fileName, string label, CancellationToken cancellationToken)
+        private async UniTask JumpInternal(string file, string label, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(file))
             {
                 Debug.LogError("File name is empty.");
                 return;
@@ -57,10 +74,10 @@ namespace ChotNovel.Player
             }
 
             _textElementBuffer.Clear();
-            var success = await _textContainer.LoadTextElements(fileName, _textElementBuffer, cancellationToken);
+            var success = await _textContainer.LoadTextElements(file, _textElementBuffer, cancellationToken);
             if (!success)
             {
-                Debug.LogError($"Failed to get text elements from {fileName}.");
+                Debug.LogError($"Failed to get text elements from {file}.");
                 return;
             }
             _textElements.Clear();
@@ -71,7 +88,7 @@ namespace ChotNovel.Player
                 return;
             }
 
-            _lastPlayedFileName = fileName;
+            _lastPlayedFileName = file;
             await PlayTexts(_textElements, cancellationToken);
         }
 

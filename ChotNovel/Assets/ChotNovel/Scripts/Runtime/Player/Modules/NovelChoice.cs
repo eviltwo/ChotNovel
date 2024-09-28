@@ -37,11 +37,11 @@ namespace ChotNovel.Player
                 System.Action callback;
                 if (textElement.TryGetStringParameter("file", out var fileName))
                 {
-                    callback = () => payload.Player.Play(fileName, labelName);
+                    callback = () => payload.Player.Jump(fileName, labelName);
                 }
                 else
                 {
-                    callback = () => payload.Player.Play(labelName);
+                    callback = () => payload.Player.Jump(labelName);
                 }
                 _buttonManager.AddButton(text, callback);
             }

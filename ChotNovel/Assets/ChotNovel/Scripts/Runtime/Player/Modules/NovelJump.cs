@@ -20,11 +20,11 @@ namespace ChotNovel.Player
             {
                 if (textElement.TryGetStringParameter("file", out var fileName))
                 {
-                    payload.Player.Play(fileName, labelName);
+                    payload.Player.Jump(fileName, labelName);
                 }
                 else
                 {
-                    payload.Player.Play(labelName);
+                    payload.Player.Jump(labelName);
                 }
             }
             return UniTask.CompletedTask;
