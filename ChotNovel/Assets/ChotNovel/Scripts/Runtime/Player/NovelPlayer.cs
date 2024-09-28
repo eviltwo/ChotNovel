@@ -9,9 +9,9 @@ namespace ChotNovel.Player
     {
         private ITextContainer _textContainer;
         private PlaybackParameters _playbackParams = new PlaybackParameters();
-        private string _lastPlayedFileName;
         private List<TextElement> _textElementBuffer = new List<TextElement>();
         private CancellationTokenSource _playerCancellation;
+        private PlaybackLog _playbackLog = new PlaybackLog();
 
         private void Awake()
         {
@@ -72,16 +72,19 @@ namespace ChotNovel.Player
             if (_textElementBuffer.Count > 0)
             {
                 _playbackParams.Payload.IgnoreWait = true;
-                await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
+                _playbackLog.LastPlayedFile = string.Empty;
+                _playbackLog.LastPlayedLabel = string.Empty;
+                await playbackController.PlayTexts(_textElementBuffer, _playbackParams, _playbackLog, 0, cancellationToken);
             }
             // Play text elements. (default speed)
             _textElementBuffer.Clear();
             if (await LoadLabeledTextElements(file, label, _textElementBuffer, cancellationToken))
             {
-                _lastPlayedFileName = file;
                 _playbackParams.Payload.IgnoreWait = false;
                 _textElementBuffer.RemoveRange(0, step);
-                await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
+                _playbackLog.LastPlayedFile = file;
+                _playbackLog.LastPlayedLabel = label;
+                await playbackController.PlayTexts(_textElementBuffer, _playbackParams, _playbackLog, step, cancellationToken);
             }
         }
 
@@ -90,7 +93,7 @@ namespace ChotNovel.Player
         /// </summary>
         public void Jump(string label)
         {
-            Jump(_lastPlayedFileName, label);
+            Jump(_playbackLog.LastPlayedFile, label);
         }
 
         /// <summary>
@@ -125,9 +128,10 @@ namespace ChotNovel.Player
             var labeledTextElements = new List<TextElement>();
             if (await LoadLabeledTextElements(file, label, labeledTextElements, cancellationToken))
             {
-                _lastPlayedFileName = file;
                 var playbackController = new DefaultPlaybackController();
-                await playbackController.PlayTexts(labeledTextElements, _playbackParams, cancellationToken);
+                _playbackLog.LastPlayedFile = file;
+                _playbackLog.LastPlayedLabel = label;
+                await playbackController.PlayTexts(labeledTextElements, _playbackParams, _playbackLog, 0, cancellationToken);
             }
         }
 
@@ -144,6 +148,13 @@ namespace ChotNovel.Player
                 return false;
             }
             return true;
+        }
+
+        public void GetCurrentPlaybackAddress(out string file, out string label, out int step)
+        {
+            file = _playbackLog.LastPlayedFile;
+            label = _playbackLog.LastPlayedLabel;
+            step = _playbackLog.LastPlayedStep;
         }
 
         public void RegisterModule(NovelModule module)
@@ -164,18 +175,27 @@ namespace ChotNovel.Player
             }
         }
 
-        public class PlaybackParameters
+        private class PlaybackParameters
         {
             public NovelModulePayload Payload = new NovelModulePayload();
             public List<NovelModule> Modules = new List<NovelModule>();
         }
 
+        private class PlaybackLog
+        {
+            public string LastPlayedFile;
+            public string LastPlayedLabel;
+            public int LastPlayedStep;
+        }
+
         private class DefaultPlaybackController
         {
-            public async UniTask PlayTexts(IReadOnlyList<TextElement> textElements, PlaybackParameters playbackParams, CancellationToken cancellationToken)
+            public async UniTask PlayTexts(IReadOnlyList<TextElement> textElements, PlaybackParameters playbackParams, PlaybackLog log, int baseStepForLog, CancellationToken cancellationToken)
             {
-                foreach (var textElement in textElements)
+                for (int i = 0; i < textElements.Count; i++)
                 {
+                    log.LastPlayedStep = baseStepForLog + i;
+                    var textElement = textElements[i];
                     await PlayModules(textElement, playbackParams.Payload, playbackParams.Modules, cancellationToken);
                 }
             }
