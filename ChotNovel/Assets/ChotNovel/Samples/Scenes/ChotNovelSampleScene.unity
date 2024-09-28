@@ -1809,9 +1809,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
-  _dummyFile: test
-  _dummyLabel: RouteA
-  _dummyStep: 3
+  _dummyFile: test3
+  _dummyLabel: Start
+  _dummyStep: 2
 --- !u!4 &1736104241
 Transform:
   m_ObjectHideFlags: 0

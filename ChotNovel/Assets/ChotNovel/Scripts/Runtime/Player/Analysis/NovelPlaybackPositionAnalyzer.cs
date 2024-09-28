@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace ChotNovel.Player
 {
@@ -44,7 +45,7 @@ namespace ChotNovel.Player
                 return true;
             }
 
-            // Search clear command from current label section.
+            // Search clear command and collect elements from same label section.
             // Allow including jump command.
             for (int i = step - 1; i >= 0; i--)
             {
@@ -56,30 +57,110 @@ namespace ChotNovel.Player
                 }
             }
 
-            // Search previous label from current file.
-            // Not allow including jump command.
-            var connectionAnalyzer = new NovelConnectionAnalyzer();
-            connectionAnalyzer.AddTargetCommands(_jumpCommands);
-            connectionAnalyzer.PushFileTexts(file, fileElements);
-            var previousLabels = connectionAnalyzer.GetPreviousLabels(file, label);
-            if (previousLabels.Count == 0)
+            var fileNames = new List<string>();
+            if (!await textContainer.GetAllFileName(fileNames, cancellationToken))
             {
                 return false;
             }
-            var previousLabel = previousLabels[0];
-            var previousElements = new List<TextElement>();
-            if (!NovelPlayerUtility.PickLabeledTextElements(fileElements, previousLabel.Label, previousElements))
+
+            var targetFile = file;
+            var targetLabel = label;
+            const int maxItr = 10;
+            for (int itr = 0; itr < maxItr; itr++)
             {
+                // Serach previous label from same file.
+                var connectionAnalyzer = new NovelConnectionAnalyzer();
+                connectionAnalyzer.AddTargetCommands(_jumpCommands);
+                connectionAnalyzer.PushFileTexts(targetFile, fileElements);
+                var previousLabels = connectionAnalyzer.GetPreviousLabels(targetFile, targetLabel);
+                if (previousLabels.Count > 0)
+                {
+                    var previousLabel = previousLabels[0];
+                    // Search clear command and collect elements.
+                    // Not allow including jump command.
+                    if (!CollectElementsAndSearchClearCommand(fileElements, previousLabel.Label, targetLabel, results, out hasClearCommand))
+                    {
+                        return false;
+                    }
+                    if (hasClearCommand)
+                    {
+                        return true;
+                    }
+                    // Itr continue
+                    targetFile = previousLabel.File;
+                    targetLabel = previousLabel.Label;
+                    continue;
+                }
+
+                // Search previous label from other files.
+                {
+                    var foundRef = false;
+                    var previousFile = string.Empty;
+                    var previousLabel = string.Empty;
+                    foreach (var otherFile in fileNames)
+                    {
+                        if (otherFile == targetFile)
+                        {
+                            continue;
+                        }
+                        // Update file elements.
+                        if (!await textContainer.LoadTextElements(otherFile, fileElements, cancellationToken))
+                        {
+                            return false;
+                        }
+                        connectionAnalyzer = new NovelConnectionAnalyzer();
+                        connectionAnalyzer.AddTargetCommands(_jumpCommands);
+                        connectionAnalyzer.PushFileTexts(otherFile, fileElements);
+                        previousLabels = connectionAnalyzer.GetPreviousLabels(targetFile, targetLabel);
+                        if (previousLabels.Count > 0)
+                        {
+                            foundRef = true;
+                            previousFile = previousLabels[0].File;
+                            previousLabel = previousLabels[0].Label;
+                            break;
+                        }
+                    }
+                    if (!foundRef)
+                    {
+                        return false;
+                    }
+
+                    // Search clear and collect elements.
+                    if (!CollectElementsAndSearchClearCommand(fileElements, previousLabel, targetLabel, results, out hasClearCommand))
+                    {
+                        return false;
+                    }
+                    if (hasClearCommand)
+                    {
+                        return true;
+                    }
+                    // Itr continue
+                    targetFile = previousFile;
+                    targetLabel = previousLabel;
+                    continue;
+                }
+            }
+
+            return false;
+        }
+
+        private bool CollectElementsAndSearchClearCommand(IReadOnlyList<TextElement> fileElements, string previousLabel, string targetLabel, List<TextElement> insertResult, out bool hasClearCommand)
+        {
+            var previousElements = new List<TextElement>();
+            if (!NovelPlayerUtility.PickLabeledTextElements(fileElements, previousLabel, previousElements))
+            {
+                hasClearCommand = false;
                 return false;
             }
             var jumpElementStep = previousElements.FindIndex(v =>
-                    v.ElementType == TextElementType.Command
-                    && _jumpCommands.Contains(v.Content)
-                    && v.TryGetStringParameter("label", out var labelValue)
-                    && labelValue == label);
+                v.ElementType == TextElementType.Command
+                && _jumpCommands.Contains(v.Content)
+                && v.TryGetStringParameter("label", out var labelValue)
+                && labelValue == targetLabel);
             if (jumpElementStep == -1)
             {
-                return false;
+                Debug.LogWarning($"Failed to find jump command. label:{targetLabel}");
+                jumpElementStep = previousElements.Count - 1;
             }
             for (int i = jumpElementStep; i >= 0; i--)
             {
@@ -88,15 +169,16 @@ namespace ChotNovel.Player
                 {
                     continue;
                 }
-                results.Insert(0, element);
+                insertResult.Insert(0, element);
                 if (element.ElementType == TextElementType.Command && element.Content == _clearCommand)
                 {
+                    hasClearCommand = true;
                     return true;
                 }
             }
 
-            // TODO: Search previous label from other files.
-            return false;
+            hasClearCommand = false;
+            return true;
         }
     }
 }

@@ -7,5 +7,7 @@ namespace ChotNovel.Player
     public interface ITextContainer
     {
         UniTask<bool> LoadTextElements(string file, List<TextElement> results, CancellationToken cancellationToken);
+
+        UniTask<bool> GetAllFileName(List<string> results, CancellationToken cancellationToken);
     }
 }
