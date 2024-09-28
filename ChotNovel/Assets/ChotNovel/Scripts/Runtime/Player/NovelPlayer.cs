@@ -30,10 +30,6 @@ namespace ChotNovel.Player
         /// </summary>
         public void Play(string file, string label, int step)
         {
-            // TODO: Rewind to "clear" command and setup environment.
-            //       This is dummy implementation.
-            //Jump(file, label);
-
             if (string.IsNullOrEmpty(file))
             {
                 Debug.LogError("File name is empty.");
@@ -72,11 +68,13 @@ namespace ChotNovel.Player
             }
 
             var playbackController = new DefaultPlaybackController();
+            // Play previous text elements. (fast speed)
             if (_textElementBuffer.Count > 0)
             {
                 _playbackParams.Payload.IgnoreWait = true;
                 await playbackController.PlayTexts(_textElementBuffer, _playbackParams, cancellationToken);
             }
+            // Play text elements. (default speed)
             _textElementBuffer.Clear();
             if (await LoadLabeledTextElements(file, label, _textElementBuffer, cancellationToken))
             {
