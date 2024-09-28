@@ -48,6 +48,18 @@ namespace ChotNovel.Player
         /// </summary>
         public void Jump(string file, string label)
         {
+            if (string.IsNullOrEmpty(file))
+            {
+                Debug.LogError("File name is empty.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(label))
+            {
+                Debug.LogError("Label is empty.");
+                return;
+            }
+
             if (_playerCancellation != null)
             {
                 _playerCancellation.Cancel();
@@ -61,18 +73,6 @@ namespace ChotNovel.Player
 
         private async UniTask JumpInternal(string file, string label, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(file))
-            {
-                Debug.LogError("File name is empty.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(label))
-            {
-                Debug.LogError("Label is empty.");
-                return;
-            }
-
             _textElementBuffer.Clear();
             var success = await _textContainer.LoadTextElements(file, _textElementBuffer, cancellationToken);
             if (!success)
