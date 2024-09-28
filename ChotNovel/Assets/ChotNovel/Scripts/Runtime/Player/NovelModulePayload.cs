@@ -5,7 +5,6 @@ namespace ChotNovel.Player
         // Control by player.
         public NovelPlayer Player;
         public bool IgnoreWait;
-        public bool IgnoreJump;
 
         // Control by module.
         public bool SkipToEndOfPage;
