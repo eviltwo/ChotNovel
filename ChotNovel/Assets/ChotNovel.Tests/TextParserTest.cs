@@ -7,8 +7,9 @@ namespace ChotNovel.Tests
     public class TextParserTest
     {
         private string _source = @"
-*Label1|Label1Name
-Hello
+;Comment
+*Label1;Comment
+Hello;Comment
 [Command1 strParam=aaa quoteParam=""aa bb"" intParam=123 floatParam=1.23 nameOnlyParam]
 @Command2 strParam=aaa quoteParam=""aa bb"" intParam=123 floatParam=1.23 nameOnlyParam
 
@@ -22,7 +23,7 @@ Last Text";
         {
             var result = new List<TextElement>();
             TextParser.Parse(_source, result);
-            Assert.AreEqual(10, result.Count);
+            Assert.AreEqual(11, result.Count);
         }
 
         [Test]
@@ -33,8 +34,6 @@ Last Text";
             var labels = result.Where(v => v.ElementType == TextElementType.Label).ToList();
             Assert.AreEqual(2, labels.Count);
             Assert.AreEqual("Label1", labels[0].Content);
-            Assert.AreEqual(true, labels[0].TryGetStringParameter("name", out var name));
-            Assert.AreEqual("Label1Name", name);
             Assert.AreEqual("Label2", labels[1].Content);
         }
 
@@ -44,11 +43,12 @@ Last Text";
             var result = new List<TextElement>();
             TextParser.Parse(_source, result);
             var texts = result.Where(v => v.ElementType == TextElementType.Message).ToList();
-            Assert.AreEqual(4, texts.Count);
+            Assert.AreEqual(5, texts.Count);
             Assert.AreEqual("Hello", texts[0].Content);
             Assert.AreEqual("World", texts[1].Content);
             Assert.AreEqual("OK", texts[2].Content);
-            Assert.AreEqual("Line Break TextLast Text", texts[3].Content);
+            Assert.AreEqual("Line Break Text", texts[3].Content);
+            Assert.AreEqual("Last Text", texts[4].Content);
         }
 
         [Test]

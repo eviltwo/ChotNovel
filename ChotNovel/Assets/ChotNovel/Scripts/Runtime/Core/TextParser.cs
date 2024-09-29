@@ -8,181 +8,172 @@ namespace ChotNovel
     public class TextParser
     {
         // KAG Style
+        public static char CommentSymbol = ';';
         public static char LabelSymbol = '*';
-        public static char LabelParamSeparator = '|';
         public static char CommandSymbol = '@';
         public static char CommandStartSymbol = '[';
         public static char CommandEndSymbol = ']';
         public static char CommandParamSeparator = ' ';
         public static char CommandKeyValueSeparator = '=';
 
-        private static StringBuilder _messageStringBuilder = new StringBuilder();
-        private static StringBuilder _commandStringBuilder = new StringBuilder();
-
         public static void Parse(string source, List<TextElement> results)
         {
+            results.Clear();
             using (var reader = new StringReader(source))
             {
                 var line = string.Empty;
-                _messageStringBuilder.Clear();
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (string.IsNullOrEmpty(line))
-                    {
-                        continue;
-                    }
-
-                    if (line.StartsWith(LabelSymbol))
-                    {
-                        if (_messageStringBuilder.Length > 0)
-                        {
-                            results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
-                            _messageStringBuilder.Clear();
-                        }
-                        // TODO: Add label parameters
-                        results.Add(ParseLabel(line.Substring(1)));
-                    }
-                    else if (line.StartsWith(CommandSymbol))
-                    {
-                        if (_messageStringBuilder.Length > 0)
-                        {
-                            results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
-                            _messageStringBuilder.Clear();
-                        }
-                        results.Add(ParseCommand(line.Substring(1)));
-                    }
-                    else
-                    {
-                        _commandStringBuilder.Clear();
-                        var charIndex = 0;
-                        while (charIndex < line.Length)
-                        {
-                            if (line[charIndex] == CommandStartSymbol)
-                            {
-                                if (_messageStringBuilder.Length > 0)
-                                {
-                                    results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
-                                    _messageStringBuilder.Clear();
-                                }
-
-                                charIndex++;
-                                while (charIndex < line.Length)
-                                {
-                                    if (line[charIndex] == CommandEndSymbol && _commandStringBuilder.Length > 0)
-                                    {
-                                        results.Add(ParseCommand(_commandStringBuilder.ToString()));
-                                        _commandStringBuilder.Clear();
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        _commandStringBuilder.Append(line[charIndex]);
-                                        charIndex++;
-                                    }
-                                }
-                                if (_commandStringBuilder.Length > 0)
-                                {
-                                    Debug.LogError("Command not closed: " + _commandStringBuilder.ToString());
-                                }
-                            }
-                            else
-                            {
-                                _messageStringBuilder.Append(line[charIndex]);
-                            }
-                            charIndex++;
-                        }
-                    }
-                }
-                if (_messageStringBuilder.Length > 0)
-                {
-                    results.Add(new TextElement(_messageStringBuilder.ToString(), TextElementType.Message));
-                    _messageStringBuilder.Clear();
+                    ParseLine(line, results);
                 }
             }
         }
 
-        private static TextElement ParseLabel(string labelSource)
+        private static StringBuilder _elementStringBuilder = new StringBuilder();
+        private static void ParseLine(string line, List<TextElement> results)
         {
-            var splitResults = labelSource.Split(LabelParamSeparator);
-            if (splitResults.Length != 2)
+            line = RemoveComment(line);
+            if (string.IsNullOrEmpty(line))
             {
-                return new TextElement(labelSource, TextElementType.Label);
+                return;
             }
 
-            var element = new TextElement(splitResults[0], TextElementType.Label);
-            element.AddParameter("name", splitResults[1]);
-            return element;
-        }
-
-        private static List<string> _commandParamBuffer = new List<string>();
-        private static StringBuilder _commandParamStringBuilder = new StringBuilder();
-        private static TextElement ParseCommand(string commandSource)
-        {
-            var splitResults = commandSource.Split(CommandParamSeparator);
-            if (splitResults.Length == 0)
+            if (line.StartsWith(LabelSymbol))
             {
-                return new TextElement(string.Empty, TextElementType.Command);
+                ParseLabel(line.Substring(1), results);
+                return;
             }
 
-            _commandParamBuffer.Clear();
-            _commandParamStringBuilder.Clear();
-            var quote = false;
-            for (int i = 0; i < splitResults.Length; i++)
+            if (line.StartsWith(CommandSymbol))
             {
-                var param = splitResults[i];
-                if (quote)
-                {
-                    _commandParamStringBuilder.Append(CommandParamSeparator);
-                    if (param.EndsWith("\""))
-                    {
-                        _commandParamStringBuilder.Append(param.Replace("\"", ""));
-                        _commandParamBuffer.Add(_commandParamStringBuilder.ToString());
-                        _commandParamStringBuilder.Clear();
-                        quote = false;
-                    }
-                    else
-                    {
-                        _commandParamStringBuilder.Append(param.Replace("\"", ""));
-                    }
-                }
-                else
-                {
-                    var quateCount = param.Length - param.Replace("\"", "").Length;
-                    if (quateCount == 1)
-                    {
-                        quote = true;
-                        _commandParamStringBuilder.Append(param.Replace("\"", ""));
-                    }
-                    else
-                    {
-                        _commandParamBuffer.Add(param.Replace("\"", ""));
-                    }
-                }
+                ParseCommand(line.Substring(1), results);
+                return;
             }
 
-            var element = new TextElement(splitResults[0], TextElementType.Command);
-            for (var i = 1; i < _commandParamBuffer.Count; i++)
+            _elementStringBuilder.Clear();
+            var command = false;
+            for (int i = 0; i < line.Length; i++)
             {
-                var param = _commandParamBuffer[i];
-                if (string.IsNullOrEmpty(param))
+                var c = line[i];
+                if (!command && c == CommandStartSymbol)
                 {
+                    if (_elementStringBuilder.Length > 0)
+                    {
+                        results.Add(new TextElement(_elementStringBuilder.ToString(), TextElementType.Message));
+                        _elementStringBuilder.Clear();
+                    }
+                    command = true;
                     continue;
                 }
-                var keyValue = param.Split(CommandKeyValueSeparator);
-                if (keyValue.Length == 1)
+                if (command && c == CommandEndSymbol)
                 {
-                    element.AddParameter(keyValue[0], string.Empty);
+                    ParseCommand(_elementStringBuilder.ToString(), results);
+                    _elementStringBuilder.Clear();
+                    command = false;
+                    continue;
                 }
-                else if (keyValue.Length == 2)
-                {
-                    element.AddParameter(keyValue[0], keyValue[1]);
-                }
-                else
-                {
-                    Debug.LogError("Invalid command parameter: " + param);
-                }
+                _elementStringBuilder.Append(c);
             }
-            return element;
+            if (_elementStringBuilder.Length > 0)
+            {
+                results.Add(new TextElement(_elementStringBuilder.ToString(), TextElementType.Message));
+            }
+        }
+
+        private static string RemoveComment(string source)
+        {
+            var index = source.IndexOf(CommentSymbol);
+            if (index == -1)
+            {
+                return source;
+            }
+            return source.Substring(0, index);
+        }
+
+        private static void ParseLabel(string source, List<TextElement> results)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+            results.Add(new TextElement(source, TextElementType.Label));
+        }
+
+        private static List<string> _commandSplitBuffer = new List<string>();
+        private static void ParseCommand(string source, List<TextElement> results)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+            _commandSplitBuffer.Clear();
+            SplitCommand(source, _commandSplitBuffer);
+            var commandName = _commandSplitBuffer[0];
+            if (string.IsNullOrEmpty(commandName))
+            {
+                Debug.LogError($"Command name is empty: {source}");
+                return;
+            }
+            var element = new TextElement(commandName, TextElementType.Command);
+            for (var i = 1; i < _commandSplitBuffer.Count; i++)
+            {
+                ParseCommandParam(_commandSplitBuffer[i], element);
+            }
+            results.Add(element);
+        }
+
+        private static StringBuilder _commandSplitStringBuilder = new StringBuilder();
+        private static void SplitCommand(string source, List<string> results)
+        {
+            results.Clear();
+            _commandSplitStringBuilder.Clear();
+            var quate = false;
+            for (int i = 0; i < source.Length; i++)
+            {
+                var c = source[i];
+                if (c == '"')
+                {
+                    quate = !quate;
+                    continue;
+                }
+                if (quate)
+                {
+                    _commandSplitStringBuilder.Append(c);
+                    continue;
+                }
+                if (c == CommandParamSeparator)
+                {
+                    results.Add(_commandSplitStringBuilder.ToString());
+                    _commandSplitStringBuilder.Clear();
+                    continue;
+                }
+                _commandSplitStringBuilder.Append(c);
+            }
+            if (_commandSplitStringBuilder.Length > 0)
+            {
+                results.Add(_commandSplitStringBuilder.ToString());
+            }
+        }
+
+        private static void ParseCommandParam(string source, TextElement result)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+            var split = source.Split(CommandKeyValueSeparator);
+            if (split.Length == 1)
+            {
+                result.AddParameter(split[0], string.Empty);
+            }
+            else if (split.Length == 2)
+            {
+                result.AddParameter(split[0], split[1]);
+            }
+            else
+            {
+                Debug.LogError("Invalid command parameter: " + source);
+            }
         }
     }
 }
