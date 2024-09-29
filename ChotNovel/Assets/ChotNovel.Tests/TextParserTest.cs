@@ -1,89 +1,262 @@
 using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
 
 namespace ChotNovel.Tests
 {
     public class TextParserTest
     {
-        private string _source = @"
-;Comment
-*Label1;Comment
-Hello;Comment
-[Command1 strParam=aaa quoteParam=""aa bb"" intParam=123 floatParam=1.23 nameOnlyParam]
-@Command2 strParam=aaa quoteParam=""aa bb"" intParam=123 floatParam=1.23 nameOnlyParam
-
-*Label2
-World[Command3]OK[Command4]
-Line Break Text
-Last Text";
-
         [Test]
-        public void Parse()
+        public void IgnoreCommentLine()
         {
             var result = new List<TextElement>();
-            TextParser.Parse(_source, result);
-            Assert.AreEqual(11, result.Count);
+            TextParser.Parse(";Comment", result);
+            Assert.AreEqual(0, result.Count);
         }
 
         [Test]
-        public void ParseLabel()
+        public void IgnoreTailComment()
         {
             var result = new List<TextElement>();
-            TextParser.Parse(_source, result);
-            var labels = result.Where(v => v.ElementType == TextElementType.Label).ToList();
-            Assert.AreEqual(2, labels.Count);
-            Assert.AreEqual("Label1", labels[0].Content);
-            Assert.AreEqual("Label2", labels[1].Content);
+            TextParser.Parse("Hello;Comment", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual("Hello", result[0].Content);
         }
 
         [Test]
-        public void ParseMessage()
+        public void ParseLabelLine()
         {
             var result = new List<TextElement>();
-            TextParser.Parse(_source, result);
-            var texts = result.Where(v => v.ElementType == TextElementType.Message).ToList();
-            Assert.AreEqual(5, texts.Count);
-            Assert.AreEqual("Hello", texts[0].Content);
-            Assert.AreEqual("World", texts[1].Content);
-            Assert.AreEqual("OK", texts[2].Content);
-            Assert.AreEqual("Line Break Text", texts[3].Content);
-            Assert.AreEqual("Last Text", texts[4].Content);
+            TextParser.Parse("*Label1", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Label, result[0].ElementType);
+            Assert.AreEqual("Label1", result[0].Content);
+        }
+
+        [TestCase("Hello")]
+        [TestCase("Hello World")]
+        [TestCase("123")]
+        [TestCase(".=+-*/_")]
+        public void ParseMessageOneLine(string str)
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse(str, result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Message, result[0].ElementType);
+            Assert.AreEqual(str, result[0].Content);
         }
 
         [Test]
-        public void ParseCommand()
+        public void ParseMessageMultipleLine()
         {
             var result = new List<TextElement>();
-            TextParser.Parse(_source, result);
-            var commands = result.Where(v => v.ElementType == TextElementType.Command).ToList();
-            Assert.AreEqual(4, commands.Count);
-            {
-                Assert.AreEqual("Command1", commands[0].Content);
-                Assert.AreEqual(true, commands[0].TryGetStringParameter("strParam", out var strValue), "strParam exists");
-                Assert.AreEqual("aaa", strValue);
-                Assert.AreEqual(true, commands[0].TryGetStringParameter("quoteParam", out var quoteValue), "quateParam exists");
-                Assert.AreEqual("aa bb", quoteValue);
-                Assert.AreEqual(true, commands[0].TryGetIntParameter("intParam", out var intValue), "intParam exists");
-                Assert.AreEqual(123, intValue);
-                Assert.AreEqual(true, commands[0].TryGetFloatParameter("floatParam", out var floatValue), "floatParam exists");
-                Assert.AreEqual(1.23f, floatValue);
-                Assert.AreEqual(true, commands[0].TryGetStringParameter("nameOnlyParam", out var _), "nameOnlyParam exists");
-            }
-            {
-                Assert.AreEqual("Command2", commands[1].Content);
-                Assert.AreEqual(true, commands[1].TryGetStringParameter("strParam", out var strValue), "strParam exists");
-                Assert.AreEqual("aaa", strValue);
-                Assert.AreEqual(true, commands[1].TryGetStringParameter("quoteParam", out var quoteValue), "quateParam exists");
-                Assert.AreEqual("aa bb", quoteValue);
-                Assert.AreEqual(true, commands[1].TryGetIntParameter("intParam", out var intValue), "intParam exists");
-                Assert.AreEqual(123, intValue);
-                Assert.AreEqual(true, commands[1].TryGetFloatParameter("floatParam", out var floatValue), "floatParam exists");
-                Assert.AreEqual(1.23f, floatValue);
-                Assert.AreEqual(true, commands[1].TryGetStringParameter("nameOnlyParam", out var _), "nameOnlyParam exists");
-            }
-            Assert.AreEqual("Command3", commands[2].Content);
-            Assert.AreEqual("Command4", commands[3].Content);
+            TextParser.Parse("Hello\nWorld", result);
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(TextElementType.Message, result[0].ElementType);
+            Assert.AreEqual("Hello", result[0].Content);
+            Assert.AreEqual(TextElementType.Message, result[1].ElementType);
+            Assert.AreEqual("World", result[1].Content);
+        }
+
+        [Test]
+        public void ParseCommandLineNameOnly()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("@Command1", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+        }
+
+        [Test]
+        public void ParseCommandLineParamNoValue()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("@Command1 param", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetStringParameter("param", out var _));
+        }
+
+        [Test]
+        public void ParseCommandLineStringParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("@Command1 param=aaa", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetStringParameter("param", out var value));
+            Assert.AreEqual("aaa", value);
+        }
+
+        [Test]
+        public void ParseCommandLineQuoteParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("@Command1 param=\"aa bb\"", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetStringParameter("param", out var value));
+            Assert.AreEqual("aa bb", value);
+        }
+
+        [Test]
+        public void ParseCommandLineIntParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("@Command1 param=123", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetIntParameter("param", out var value));
+            Assert.AreEqual(123, value);
+        }
+
+        [Test]
+        public void ParseCommandLineFloatParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("@Command1 param=1.23", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetFloatParameter("param", out var value));
+            Assert.AreEqual(1.23f, value);
+        }
+
+        [Test]
+        public void ParseCommandBraketNameOnly()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1]", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+        }
+
+        [Test]
+        public void ParseCommandBraketParamNoValue()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1 param]", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetStringParameter("param", out var _));
+        }
+
+        [Test]
+        public void ParseCommandBraketStringParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1 param=aaa]", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetStringParameter("param", out var value));
+            Assert.AreEqual("aaa", value);
+        }
+
+        [Test]
+        public void ParseCommandBraketQuoteParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1 param=\"aa bb\"]", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetStringParameter("param", out var value));
+            Assert.AreEqual("aa bb", value);
+        }
+
+        [Test]
+        public void ParseCommandBraketIntParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1 param=123]", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetIntParameter("param", out var value));
+            Assert.AreEqual(123, value);
+        }
+
+        [Test]
+        public void ParseCommandBraketFloatParam()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1 param=1.23]", result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(true, result[0].TryGetFloatParameter("param", out var value));
+            Assert.AreEqual(1.23f, value);
+        }
+
+        [Test]
+        public void ParseMessageAndCommand1()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("Hello[Command1]", result);
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(TextElementType.Message, result[0].ElementType);
+            Assert.AreEqual("Hello", result[0].Content);
+            Assert.AreEqual(TextElementType.Command, result[1].ElementType);
+            Assert.AreEqual("Command1", result[1].Content);
+        }
+
+        [Test]
+        public void ParseMessageAndCommand2()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1]Hello", result);
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(TextElementType.Message, result[1].ElementType);
+            Assert.AreEqual("Hello", result[1].Content);
+        }
+
+        [Test]
+        public void ParseMessageAndCommand3()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("Hello[Command1]World", result);
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(TextElementType.Message, result[0].ElementType);
+            Assert.AreEqual("Hello", result[0].Content);
+            Assert.AreEqual(TextElementType.Command, result[1].ElementType);
+            Assert.AreEqual("Command1", result[1].Content);
+            Assert.AreEqual(TextElementType.Message, result[2].ElementType);
+            Assert.AreEqual("World", result[2].Content);
+        }
+
+        [Test]
+        public void ParseMessageAndCommand4()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("[Command1]Hello[Command2]", result);
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual(TextElementType.Command, result[0].ElementType);
+            Assert.AreEqual("Command1", result[0].Content);
+            Assert.AreEqual(TextElementType.Message, result[1].ElementType);
+            Assert.AreEqual("Hello", result[1].Content);
+            Assert.AreEqual(TextElementType.Command, result[2].ElementType);
+            Assert.AreEqual("Command2", result[2].Content);
+        }
+
+        [Test]
+        public void IgnoreBrankLine()
+        {
+            var result = new List<TextElement>();
+            TextParser.Parse("Hello\n\nWorld", result);
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(TextElementType.Message, result[0].ElementType);
+            Assert.AreEqual("Hello", result[0].Content);
+            Assert.AreEqual(TextElementType.Message, result[1].ElementType);
+            Assert.AreEqual("World", result[1].Content);
         }
     }
 }
