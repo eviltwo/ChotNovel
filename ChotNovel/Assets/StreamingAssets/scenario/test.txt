@@ -1,5 +1,6 @@
 *Start
 [clear]
+[background directory=background]
 [background texture=bg_forest]
 [actor name=Robo directory=actor]
 [actor name=Robo texture=robo layout=center]

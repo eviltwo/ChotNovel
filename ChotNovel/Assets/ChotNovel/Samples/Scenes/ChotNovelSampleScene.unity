@@ -822,7 +822,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
   _commandName: background
-  _folderName: background
   _image: {fileID: 2030264095}
 --- !u!114 &674005398
 MonoBehaviour:
@@ -853,7 +852,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
   _commandName: actor
-  _folderName: actor
   _settings: {fileID: 11400000, guid: 53e5b3c8970e0624e8f4ce794b3a3229, type: 2}
   _actorImageManager: {fileID: 1388185129}
 --- !u!114 &674005400
