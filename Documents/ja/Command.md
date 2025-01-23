@@ -4,7 +4,7 @@
 [actor name=A texture=A]
 ```
 
-コマンド名が同じ場合は変数を連結して書くことができます。
+コマンドが同じなら変数を連結できます。
 ```
 [actor name=A texture=A]
 [actor name=A layout=center]
