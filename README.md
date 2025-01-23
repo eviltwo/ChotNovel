@@ -5,6 +5,8 @@ A simple visual novel game system for Unity with a writing experience similar to
 
 ![image](https://github.com/user-attachments/assets/d314cea6-d320-41da-aac1-a26678f07fbd)
 
+Documents ([日本語](https://github.com/eviltwo/ChotNovel/tree/main/Documents/ja))
+
 # Feature
 - The script structure is based on KAG (KiriKiri) and Naninovel.
 - The script is designed so that the commands and parameters written by the script creator are kept to a minimum.
