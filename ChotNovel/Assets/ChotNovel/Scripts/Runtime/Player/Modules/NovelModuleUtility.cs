@@ -9,6 +9,26 @@ namespace ChotNovel.Player
 {
     public static class NovelModuleUtility
     {
+        public static async UniTask<Texture2D> FindTexture(string texturePath)
+        {
+            var textureDirectory = Path.GetDirectoryName(texturePath);
+            var textureName = Path.GetFileNameWithoutExtension(texturePath);
+            var texture = await FindTexture(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, textureDirectory), textureName);
+            if (texture != null)
+            {
+                return texture;
+            }
+
+            texture = await FindTexture(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, textureDirectory), textureName);
+            if (texture != null)
+            {
+                return texture;
+            }
+
+            Debug.LogError($"Texture {texturePath} is not found.");
+            return null;
+        }
+
         public static async UniTask<Texture2D> FindTexture(string folderPath, string fileName)
         {
             if (!Directory.Exists(folderPath))
@@ -18,6 +38,10 @@ namespace ChotNovel.Player
             var hasExtension = Path.HasExtension(fileName);
             var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
             var file = Directory.GetFiles(folderPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
+            if (string.IsNullOrEmpty(file))
+            {
+                return null;
+            }
             var request = await UnityWebRequestTexture.GetTexture(file).SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {

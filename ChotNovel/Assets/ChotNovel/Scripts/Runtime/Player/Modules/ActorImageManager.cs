@@ -43,6 +43,23 @@ namespace ChotNovel.Player
             }
         }
 
+        public string GetResourceDirectory(string name)
+        {
+            if (TryGetActor(name, out var actor))
+            {
+                return actor.ResourceDirectory;
+            }
+            return string.Empty;
+        }
+
+        public void SetResourceDirectory(string name, string directory)
+        {
+            if (TryGetActor(name, out var actor))
+            {
+                actor.SetResourceDirectory(directory);
+            }
+        }
+
         public void SetActorSprite(string name, Sprite sprite)
         {
             if (TryGetActor(name, out var actor))
@@ -108,6 +125,8 @@ namespace ChotNovel.Player
             private readonly Image _image;
             private readonly GameObject _gameObject;
             private readonly RectTransform _rectTransform;
+            private string _resourceDirectory;
+            public string ResourceDirectory => _resourceDirectory;
             private Vector2 _offset;
             public Vector2 Offset => _offset;
             private Vector2 _position;
@@ -128,6 +147,11 @@ namespace ChotNovel.Player
                 {
                     Destroy(_image.gameObject);
                 }
+            }
+
+            public void SetResourceDirectory(string directory)
+            {
+                _resourceDirectory = directory;
             }
 
             public void SetSprite(Sprite sprite)
