@@ -1,2 +1,3 @@
 # ドキュメント
-- [コマンド一覧](commands.md)
+- [コマンド](Command.md)
+- [コマンド一覧](Command List.md)
