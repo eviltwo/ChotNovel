@@ -7,7 +7,7 @@
 ```
 ```
 *Start
-[background texture=bg_forest]
+[clear]
 [actor name=Robo texture=robo]
 やあ、こんにちは！[p]
 ```
