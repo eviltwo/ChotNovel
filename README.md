@@ -1,7 +1,9 @@
 # ChotNovel
-Simple novel engine for Unity.
+A simple visual novel game system for Unity with a writing experience similar to KAG(Kirikiri).
 
-Unity向けのシンプルなノベルゲームシステムです。
+書き心地が吉里吉里に似ている、Unity向けのシンプルなノベルゲームシステムです。
+
+![image](https://github.com/user-attachments/assets/d314cea6-d320-41da-aac1-a26678f07fbd)
 
 # Feature
 - The script structure is based on KAG (KiriKiri) and Naninovel.
