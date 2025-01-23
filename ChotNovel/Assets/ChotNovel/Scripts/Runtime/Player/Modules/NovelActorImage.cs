@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -10,9 +9,6 @@ namespace ChotNovel.Player
     {
         [SerializeField]
         private string _commandName = "actor";
-
-        [SerializeField]
-        private string _folderName = "actor";
 
         [SerializeField]
         private NovelActorImageSettings _settings = null;
@@ -74,9 +70,15 @@ namespace ChotNovel.Player
             {
                 _actorImageManager.CreateActor(actorName);
 
+                if (textElement.TryGetStringParameter("directory", out var resourceDirectory))
+                {
+                    _actorImageManager.SetResourceDirectory(actorName, resourceDirectory);
+                }
+
                 if (textElement.TryGetStringParameter("texture", out var textureName))
                 {
-                    var texture = await FindTexture(textureName);
+                    var texturePath = PathUtility.CombineWithoutEmpty(_actorImageManager.GetResourceDirectory(actorName), textureName);
+                    var texture = await NovelModuleUtility.FindTexture(texturePath);
                     if (texture != null)
                     {
                         ReleaseCreatedAsset(actorName);
@@ -137,17 +139,6 @@ namespace ChotNovel.Player
                     _createdAssets.Remove(actorName);
                 }
             }
-        }
-
-        private async UniTask<Texture2D> FindTexture(string fileName)
-        {
-            var texture = await NovelModuleUtility.FindTexture(Path.Combine(Application.persistentDataPath, _folderName), fileName);
-            if (texture != null)
-            {
-                return texture;
-            }
-
-            return await NovelModuleUtility.FindTexture(Path.Combine(Application.streamingAssetsPath, _folderName), fileName);
         }
     }
 }

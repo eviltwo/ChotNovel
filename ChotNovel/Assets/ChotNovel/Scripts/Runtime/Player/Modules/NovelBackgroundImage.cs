@@ -1,4 +1,3 @@
-using System.IO;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -12,11 +11,9 @@ namespace ChotNovel.Player
         private string _commandName = "background";
 
         [SerializeField]
-        private string _folderName = "background";
-
-        [SerializeField]
         private Image _image = null;
 
+        private string _folderName;
         private Texture2D _createdTexture;
         private Sprite _createdSprite;
 
@@ -57,9 +54,15 @@ namespace ChotNovel.Player
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
+            if (textElement.TryGetStringParameter("directory", out var resourceDirectory))
+            {
+                _folderName = resourceDirectory;
+            }
+
             if (textElement.TryGetStringParameter("texture", out var textureName))
             {
-                var texture = await FindTexture(textureName);
+                var texturePath = PathUtility.CombineWithoutEmpty(_folderName, textureName);
+                var texture = await NovelModuleUtility.FindTexture(texturePath);
                 if (texture != null)
                 {
                     ReleaseCreatedImages();
@@ -69,17 +72,6 @@ namespace ChotNovel.Player
                     _image.sprite = _createdSprite;
                 }
             }
-        }
-
-        private async UniTask<Texture2D> FindTexture(string fileName)
-        {
-            var texture = await NovelModuleUtility.FindTexture(Path.Combine(Application.persistentDataPath, _folderName), fileName);
-            if (texture != null)
-            {
-                return texture;
-            }
-
-            return await NovelModuleUtility.FindTexture(Path.Combine(Application.streamingAssetsPath, _folderName), fileName);
         }
     }
 }
