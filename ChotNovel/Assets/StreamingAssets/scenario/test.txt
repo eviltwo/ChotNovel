@@ -37,4 +37,4 @@ You choose B.[p]
 *Ending
 [talker clear]
 End test[p]
-[jump file=test2 label=Start]
+[jump file=scenario/test2 label=Start]
