@@ -1,6 +1,8 @@
 *Start
 [clear]
+[background directory=background]
 [background texture=bg_forest]
+[actor name=Robo directory=actor]
 [actor name=Robo texture=robo layout=center]
 [talker name=Robo]
 Hello,[r]World![p]
@@ -11,6 +13,7 @@ very very very very very very very very very very very long.
 very very very very very very very very very very very long.[p]
 
 [actor name=Robo layout=right]
+[actor name=John directory=actor]
 [actor name=John texture=john layout=left]
 [talker name=John]
 Let's go![p]
@@ -34,4 +37,4 @@ You choose B.[p]
 *Ending
 [talker clear]
 End test[p]
-[jump file=test2 label=Start]
+[jump file=scenario/test2 label=Start]

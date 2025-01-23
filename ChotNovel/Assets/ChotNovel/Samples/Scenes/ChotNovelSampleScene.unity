@@ -822,7 +822,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
   _commandName: background
-  _folderName: background
   _image: {fileID: 2030264095}
 --- !u!114 &674005398
 MonoBehaviour:
@@ -853,7 +852,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
   _commandName: actor
-  _folderName: actor
   _settings: {fileID: 11400000, guid: 53e5b3c8970e0624e8f4ce794b3a3229, type: 2}
   _actorImageManager: {fileID: 1388185129}
 --- !u!114 &674005400
@@ -1976,7 +1974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d9697e649dfa2748bef364212be2102, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _folderName: scenario
+  _folderName: 
   _textEncoding: utf-8
 --- !u!114 &1670162766
 MonoBehaviour:
@@ -2066,7 +2064,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 1670162766}
-  _fileName: test
+  _fileName: scenario/test
   _label: Start
 --- !u!4 &1769731316
 Transform:

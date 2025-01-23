@@ -13,7 +13,7 @@ namespace ChotNovel.Player
     public class NovelTextFileLoader : MonoBehaviour, ITextContainer
     {
         [SerializeField]
-        private string _folderName = "scenario";
+        private string _folderName = "";
 
         [SerializeField]
         private string _textEncoding = "utf-8";
@@ -22,10 +22,12 @@ namespace ChotNovel.Player
         {
             results.Clear();
             var encoding = Encoding.GetEncoding(_textEncoding);
-            var text = await LoadText(Path.Combine(Application.persistentDataPath, _folderName), file, encoding);
+            var fileDirectory = Path.GetDirectoryName(file);
+            var fileName = Path.GetFileName(file);
+            var text = await LoadText(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, _folderName, fileDirectory), fileName, encoding);
             if (text == null)
             {
-                text = await LoadText(Path.Combine(Application.streamingAssetsPath, _folderName), file, encoding);
+                text = await LoadText(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, _folderName, fileDirectory), fileName, encoding);
             }
             if (text == null)
             {
