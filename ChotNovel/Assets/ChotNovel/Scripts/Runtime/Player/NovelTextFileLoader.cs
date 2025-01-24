@@ -13,7 +13,7 @@ namespace ChotNovel.Player
     public class NovelTextFileLoader : MonoBehaviour, ITextContainer
     {
         [SerializeField]
-        private string _folderName = "";
+        private string _textFolderName = "";
 
         [SerializeField]
         private string _textEncoding = "utf-8";
@@ -22,12 +22,10 @@ namespace ChotNovel.Player
         {
             results.Clear();
             var encoding = Encoding.GetEncoding(_textEncoding);
-            var fileDirectory = Path.GetDirectoryName(file);
-            var fileName = Path.GetFileName(file);
-            var text = await LoadText(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, _folderName, fileDirectory), fileName, encoding);
+            var text = await LoadText(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, _textFolderName, file), encoding);
             if (text == null)
             {
-                text = await LoadText(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, _folderName, fileDirectory), fileName, encoding);
+                text = await LoadText(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, _textFolderName, file), encoding);
             }
             if (text == null)
             {
@@ -37,15 +35,21 @@ namespace ChotNovel.Player
             return true;
         }
 
-        private static async UniTask<string> LoadText(string folderPath, string fileName, Encoding encoding)
+        private static async UniTask<string> LoadText(string filePath, Encoding encoding)
         {
-            if (!Directory.Exists(folderPath))
+            var directoryPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directoryPath))
             {
                 return null;
             }
+            var fileName = Path.GetFileName(filePath);
             var hasExtension = Path.HasExtension(fileName);
             var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
-            var file = Directory.GetFiles(folderPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
+            var file = Directory.GetFiles(directoryPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
+            if (!File.Exists(file))
+            {
+                return null;
+            }
             var request = await UnityWebRequest.Get(file).SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
@@ -60,7 +64,7 @@ namespace ChotNovel.Player
         {
             // TODO: Since GetFiles() does not work on Android OS, create a file listing the file names.
             results.Clear();
-            var persistentFolderPath = Path.Combine(Application.persistentDataPath, _folderName);
+            var persistentFolderPath = Path.Combine(Application.persistentDataPath, _textFolderName);
             if (Directory.Exists(persistentFolderPath))
             {
                 var files = Directory.GetFiles(persistentFolderPath)
@@ -69,7 +73,7 @@ namespace ChotNovel.Player
                 results.AddRange(files);
             }
 
-            var streamingAssetsFolderPath = Path.Combine(Application.streamingAssetsPath, _folderName);
+            var streamingAssetsFolderPath = Path.Combine(Application.streamingAssetsPath, _textFolderName);
             if (Directory.Exists(streamingAssetsFolderPath))
             {
                 var files = Directory.GetFiles(streamingAssetsFolderPath)
