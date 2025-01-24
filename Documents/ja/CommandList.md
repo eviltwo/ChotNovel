@@ -1,21 +1,19 @@
 # コマンド一覧
-|コマンド|説明|
-|---|---|
-|actor name=A directory=B|Aというキャラの画像を読み込むディレクトリを"B"にする。|
-|actor name=A texture=B|Aというキャラに"B"という画像を設定する。|
-|actor name=A layout=center|Aというキャラを真ん中に配置する。<br>left<br>center<br>right|
-|actor name=A x=123 y=123|Aというキャラの座標を設定する。|
-|actor name=A xoffset=123 yoffset=123|Aというキャラのオフセット座標を設定する。|
-|actor name=A clear|キャラの設定値を全て削除する。|
-|background directory=A|背景の画像を読み込むディレクトリを"A"にする。|
-|background texture=A|背景に"A"という画像を表示する。|
-|choice label=A|"A"というラベルのシナリオへ移動する選択肢を表示する。|
-|choice file="A" label=B|"A"というファイル内の"B"というラベルのシナリオへ移動する選択肢を表示する。|
-|clear|表示しているキャラや背景などを全て削除する。|
-|jump label=A|"A"というラベルのシナリオへ移動する。|
-|jump file="A" label=B|"A"というファイル内の"B"というラベルのシナリオへ移動する。|
-|r|テキストを改行する。|
-|p|クリックを待つ。クリックするとテキストを削除する。|
-|talker name=A|話者名を"A"にする。|
-|talker clear|話者名を削除する。|
-|wait time=1|1秒待機する。|
+|コマンド|機能の説明|変数の説明|
+|---|---|---|
+|`[actor name=A texture=B]`|立ち絵を表示する。|A: 立ち絵の名前<br>B: 画像のファイル名|
+|`[actor name=A layout=center]`|立ち絵の位置を変える。|A: 立ち絵の名前<br>B: left center right|
+|`[actor name=A x=123 y=123]`|立ち絵の位置を変える。|A: 立ち絵の名前<br>数値はピクセル数|
+|`[actor name=A xoffset=123 yoffset=123]`|立ち絵の位置をずらす。|A: 立ち絵の名前<br>数値はピクセル数|
+|`[actor name=A clear]`|立ち絵を非表示にする。|A: 立ち絵の名前|
+|`[background texture=A]`|背景を表示する。|A: 画像のファイル名|
+|`[choice label=A]`|分岐の選択肢を表示する。|A: 移動先のラベル|
+|`[choice file=A label=B]`|分岐の選択肢を表示する。|A: 移動先のファイル名<br>B: 移動先のラベル|
+|`[clear]`|立ち絵と背景を全てを非表示にする。<br>章の始まりに使用する。||
+|`[jump label=A]`|別の章に移動する。|A: 移動先のラベル|
+|`[jump file=A label=B]`|別の章に移動する。|A: 移動先のファイル名<br>B: 移動先のラベル|
+|`[r]`|改行する。|
+|`[p]`|クリックを待つ。クリックするとテキストを削除する。|
+|`[talker name=A]`|話者名を表示する。|A: 名前|
+|`[talker clear]`|話者名を非表示にする。||
+|`[wait time=1]`|待機する。|数値は秒数|
