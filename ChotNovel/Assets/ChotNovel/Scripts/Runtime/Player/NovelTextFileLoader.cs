@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -13,54 +12,45 @@ namespace ChotNovel.Player
     public class NovelTextFileLoader : MonoBehaviour, ITextContainer
     {
         [SerializeField]
-        private string _folderName = "";
+        private string _textFolderName = "";
 
         [SerializeField]
         private string _textEncoding = "utf-8";
 
-        public async UniTask<bool> LoadTextElements(string file, List<TextElement> results, CancellationToken cancellationToken)
+        public async UniTask<bool> LoadTextElements(string localFilePath, List<TextElement> results, CancellationToken cancellationToken)
         {
-            results.Clear();
             var encoding = Encoding.GetEncoding(_textEncoding);
-            var fileDirectory = Path.GetDirectoryName(file);
-            var fileName = Path.GetFileName(file);
-            var text = await LoadText(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, _folderName, fileDirectory), fileName, encoding);
-            if (text == null)
+            var hasFilePath = NovelPlayerUtility.TryGetNovelFilePath(PathUtility.CombineWithoutEmpty(_textFolderName, localFilePath), out var filePath);
+            if (!hasFilePath)
             {
-                text = await LoadText(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, _folderName, fileDirectory), fileName, encoding);
-            }
-            if (text == null)
-            {
+                Debug.LogError($"File not found: {localFilePath}");
                 return false;
             }
-            TextParser.Parse(text, results);
-            return true;
-        }
 
-        private static async UniTask<string> LoadText(string folderPath, string fileName, Encoding encoding)
-        {
-            if (!Directory.Exists(folderPath))
-            {
-                return null;
-            }
-            var hasExtension = Path.HasExtension(fileName);
-            var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
-            var file = Directory.GetFiles(folderPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
-            var request = await UnityWebRequest.Get(file).SendWebRequest();
+            var request = await UnityWebRequest.Get(filePath).SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"{request.result} {request.error}");
-                return null;
+                Debug.LogError($"Failed to load text: {request.result} {request.error}");
+                return false;
             }
 
-            return encoding.GetString(request.downloadHandler.data);
+            var text = encoding.GetString(request.downloadHandler.data);
+            if (string.IsNullOrEmpty(text))
+            {
+                Debug.LogError($"Failed to encode text: {filePath}");
+                return false;
+            }
+
+            results.Clear();
+            TextParser.Parse(text, results);
+            return true;
         }
 
         public UniTask<bool> GetAllFileName(List<string> results, CancellationToken cancellationToken)
         {
             // TODO: Since GetFiles() does not work on Android OS, create a file listing the file names.
             results.Clear();
-            var persistentFolderPath = Path.Combine(Application.persistentDataPath, _folderName);
+            var persistentFolderPath = Path.Combine(Application.persistentDataPath, _textFolderName);
             if (Directory.Exists(persistentFolderPath))
             {
                 var files = Directory.GetFiles(persistentFolderPath)
@@ -69,7 +59,7 @@ namespace ChotNovel.Player
                 results.AddRange(files);
             }
 
-            var streamingAssetsFolderPath = Path.Combine(Application.streamingAssetsPath, _folderName);
+            var streamingAssetsFolderPath = Path.Combine(Application.streamingAssetsPath, _textFolderName);
             if (Directory.Exists(streamingAssetsFolderPath))
             {
                 var files = Directory.GetFiles(streamingAssetsFolderPath)

@@ -1,6 +1,3 @@
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,43 +6,19 @@ namespace ChotNovel.Player
 {
     public static class NovelModuleUtility
     {
-        public static async UniTask<Texture2D> FindTexture(string texturePath)
+        public static async UniTask<Texture2D> LoadTexture(string localFilePath)
         {
-            var textureDirectory = Path.GetDirectoryName(texturePath);
-            var textureName = Path.GetFileNameWithoutExtension(texturePath);
-            var texture = await FindTexture(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, textureDirectory), textureName);
-            if (texture != null)
+            var hasFilePath = NovelPlayerUtility.TryGetNovelFilePath(localFilePath, out var filePath);
+            if (!hasFilePath)
             {
-                return texture;
-            }
-
-            texture = await FindTexture(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, textureDirectory), textureName);
-            if (texture != null)
-            {
-                return texture;
-            }
-
-            Debug.LogError($"Texture {texturePath} is not found.");
-            return null;
-        }
-
-        public static async UniTask<Texture2D> FindTexture(string folderPath, string fileName)
-        {
-            if (!Directory.Exists(folderPath))
-            {
+                Debug.LogError($"File not found: {localFilePath}");
                 return null;
             }
-            var hasExtension = Path.HasExtension(fileName);
-            var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
-            var file = Directory.GetFiles(folderPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
-            if (string.IsNullOrEmpty(file))
-            {
-                return null;
-            }
-            var request = await UnityWebRequestTexture.GetTexture(file).SendWebRequest();
+
+            var request = await UnityWebRequestTexture.GetTexture(filePath).SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"{request.result} {request.error}");
+                Debug.LogError($"Failed to load texture: {request.result} {request.error}");
                 return null;
             }
 

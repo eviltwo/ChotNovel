@@ -62,7 +62,7 @@ namespace ChotNovel.Player
             if (textElement.TryGetStringParameter("texture", out var textureName))
             {
                 var texturePath = PathUtility.CombineWithoutEmpty(_folderName, textureName);
-                var texture = await NovelModuleUtility.FindTexture(texturePath);
+                var texture = await NovelModuleUtility.LoadTexture(texturePath);
                 if (texture != null)
                 {
                     ReleaseCreatedImages();

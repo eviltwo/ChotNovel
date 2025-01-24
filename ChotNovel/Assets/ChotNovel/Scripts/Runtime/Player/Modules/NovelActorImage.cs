@@ -78,7 +78,7 @@ namespace ChotNovel.Player
                 if (textElement.TryGetStringParameter("texture", out var textureName))
                 {
                     var texturePath = PathUtility.CombineWithoutEmpty(_actorImageManager.GetResourceDirectory(actorName), textureName);
-                    var texture = await NovelModuleUtility.FindTexture(texturePath);
+                    var texture = await NovelModuleUtility.LoadTexture(texturePath);
                     if (texture != null)
                     {
                         ReleaseCreatedAsset(actorName);

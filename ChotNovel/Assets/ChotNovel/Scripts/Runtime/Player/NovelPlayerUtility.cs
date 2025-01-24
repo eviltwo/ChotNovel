@@ -1,4 +1,8 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace ChotNovel.Player
 {
@@ -49,6 +53,45 @@ namespace ChotNovel.Player
                 list.Add(source[startIndex + i]);
             }
             return list;
+        }
+
+        public static bool TryGetNovelFilePath(string localFilePath, out string result)
+        {
+            if (TryGetActualNovelFilePath(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, localFilePath), out result))
+            {
+                return true;
+            }
+
+            if (TryGetActualNovelFilePath(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, localFilePath), out result))
+            {
+                return true;
+            }
+
+            result = string.Empty;
+            return false;
+        }
+
+        private static bool TryGetActualNovelFilePath(string filePath, out string result)
+        {
+            var directoryPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directoryPath))
+            {
+                result = string.Empty;
+                return false;
+            }
+
+            var fileName = Path.GetFileName(filePath);
+            var hasExtension = Path.HasExtension(fileName);
+            var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
+            var file = Directory.GetFiles(directoryPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
+            if (!File.Exists(file))
+            {
+                result = string.Empty;
+                return false;
+            }
+
+            result = file;
+            return true;
         }
     }
 }
