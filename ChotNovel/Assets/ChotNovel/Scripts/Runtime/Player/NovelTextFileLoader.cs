@@ -19,7 +19,6 @@ namespace ChotNovel.Player
 
         public async UniTask<bool> LoadTextElements(string localFilePath, List<TextElement> results, CancellationToken cancellationToken)
         {
-            results.Clear();
             var encoding = Encoding.GetEncoding(_textEncoding);
             var hasFilePath = NovelPlayerUtility.TryGetNovelFilePath(PathUtility.CombineWithoutEmpty(_textFolderName, localFilePath), out var filePath);
             if (!hasFilePath)
@@ -42,6 +41,7 @@ namespace ChotNovel.Player
                 return false;
             }
 
+            results.Clear();
             TextParser.Parse(text, results);
             return true;
         }
