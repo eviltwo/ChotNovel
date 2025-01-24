@@ -7,7 +7,7 @@
 *Start
 [clear]
 [actor name=Robo texture=robo]
-やあ、こんにちは！
+こんにちは！
 ```
 
 `;`で表示されないメモが書けます。
