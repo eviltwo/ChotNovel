@@ -54,7 +54,7 @@ namespace ChotNovel.Player
 
         public override async UniTask Execute(TextElement textElement, NovelModulePayload payload, CancellationToken cancellationToken)
         {
-            if (textElement.TryGetStringParameter("directory", out var resourceDirectory))
+            if (textElement.TryGetStringParameter("folder", out var resourceDirectory))
             {
                 _folderName = resourceDirectory;
             }

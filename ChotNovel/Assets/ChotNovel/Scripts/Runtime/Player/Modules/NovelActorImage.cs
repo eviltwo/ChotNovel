@@ -70,7 +70,7 @@ namespace ChotNovel.Player
             {
                 _actorImageManager.CreateActor(actorName);
 
-                if (textElement.TryGetStringParameter("directory", out var resourceDirectory))
+                if (textElement.TryGetStringParameter("folder", out var resourceDirectory))
                 {
                     _actorImageManager.SetResourceDirectory(actorName, resourceDirectory);
                 }
