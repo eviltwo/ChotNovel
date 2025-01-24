@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -18,46 +17,33 @@ namespace ChotNovel.Player
         [SerializeField]
         private string _textEncoding = "utf-8";
 
-        public async UniTask<bool> LoadTextElements(string file, List<TextElement> results, CancellationToken cancellationToken)
+        public async UniTask<bool> LoadTextElements(string localFilePath, List<TextElement> results, CancellationToken cancellationToken)
         {
             results.Clear();
             var encoding = Encoding.GetEncoding(_textEncoding);
-            var text = await LoadText(PathUtility.CombineWithoutEmpty(Application.persistentDataPath, _textFolderName, file), encoding);
-            if (text == null)
+            var hasFilePath = NovelPlayerUtility.TryGetNovelFilePath(PathUtility.CombineWithoutEmpty(_textFolderName, localFilePath), out var filePath);
+            if (!hasFilePath)
             {
-                text = await LoadText(PathUtility.CombineWithoutEmpty(Application.streamingAssetsPath, _textFolderName, file), encoding);
-            }
-            if (text == null)
-            {
+                Debug.LogError($"File not found: {localFilePath}");
                 return false;
             }
-            TextParser.Parse(text, results);
-            return true;
-        }
 
-        private static async UniTask<string> LoadText(string filePath, Encoding encoding)
-        {
-            var directoryPath = Path.GetDirectoryName(filePath);
-            if (!Directory.Exists(directoryPath))
-            {
-                return null;
-            }
-            var fileName = Path.GetFileName(filePath);
-            var hasExtension = Path.HasExtension(fileName);
-            var searchFilter = hasExtension ? new Regex(fileName) : new Regex(fileName + ".*");
-            var file = Directory.GetFiles(directoryPath).Where(fileName => searchFilter.IsMatch(fileName)).FirstOrDefault();
-            if (!File.Exists(file))
-            {
-                return null;
-            }
-            var request = await UnityWebRequest.Get(file).SendWebRequest();
+            var request = await UnityWebRequest.Get(filePath).SendWebRequest();
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"{request.result} {request.error}");
-                return null;
+                Debug.LogError($"Failed to load text: {request.result} {request.error}");
+                return false;
             }
 
-            return encoding.GetString(request.downloadHandler.data);
+            var text = encoding.GetString(request.downloadHandler.data);
+            if (string.IsNullOrEmpty(text))
+            {
+                Debug.LogError($"Failed to encode text: {filePath}");
+                return false;
+            }
+
+            TextParser.Parse(text, results);
+            return true;
         }
 
         public UniTask<bool> GetAllFileName(List<string> results, CancellationToken cancellationToken)
