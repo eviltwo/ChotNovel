@@ -34,3 +34,11 @@ https://github.com/eviltwo/ChotNovel.git?path=ChotNovel/Assets/ChotNovel
 
 # Example
 https://github.com/eviltwo/ChotNovel/blob/9e2aa10f4adc33d6e3fc927580cab23f98b7c3a2/ChotNovel/Assets/StreamingAssets/scenario/text.txt#L1-L40
+
+# Support My Work 支援
+As a solo developer, your financial support would be greatly appreciated and helps me continue working on this project.
+
+私は個人開発者なので、金銭的に支援して頂けるととても助かります。
+- [Asset Store](https://assetstore.unity.com/publishers/12117)
+- [Steam](https://store.steampowered.com/curator/45066588)
+- [GitHub Sponsors](https://github.com/sponsors/eviltwo)
