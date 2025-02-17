@@ -11,9 +11,17 @@ namespace ChotNovel.Player
         private Button _sourceButton = null;
 
         [SerializeField]
+        private Transform _buttonParent = null;
+
+        [SerializeField]
         private bool _clearButtonsOnChoice = true;
 
         private List<Button> _buttons = new List<Button>();
+
+        private void Reset()
+        {
+            _buttonParent = transform;
+        }
 
         public void AddButton(Sprite sprite, System.Action onClick)
         {
@@ -27,7 +35,7 @@ namespace ChotNovel.Player
 
         public void AddButton(Sprite sprite, string text, System.Action onClick)
         {
-            var button = Instantiate(_sourceButton, _sourceButton.transform.parent);
+            var button = Instantiate(_sourceButton, _buttonParent);
             button.gameObject.SetActive(true);
 
             var image = GetImageInChildrenWithoutParent(button.gameObject);
