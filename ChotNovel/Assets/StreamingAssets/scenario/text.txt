@@ -14,12 +14,16 @@ very very very very very very very very very very very long.[p]
 [actor name=John texture=actor/john layout=left]
 [talker name=John]
 Let's go![p]
+[jump label=StartChoice]
 
+*StartChoice
 [background texture=background/bg_beach]
 [talker clear]
-A or B
+Choice!
 [choice text="Choose A" label=RouteA]
 [choice text="Choose B" label=RouteB]
+[choice texture=icon/apple label=StartChoice]
+[choice texture=icon/orange label=StartChoice]
 
 *RouteA
 [talker name=Robo]
